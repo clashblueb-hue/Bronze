@@ -1,0 +1,11 @@
+{
+  "name": "bronze-banner",
+  "version": "1.0.0",
+  "private": true,
+  "scripts": {
+    "dev": "npx wrangler dev",
+    "deploy": "npx wrangler deploy",
+    "db:migrate:local": "npx wrangler d1 migrations apply bronze-banner-db --local",
+    "db:migrate:remote": "npx wrangler d1 migrations apply bronze-banner-db --remote"
+  }
+}

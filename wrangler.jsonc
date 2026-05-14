@@ -1,0 +1,19 @@
+{
+  "$schema": "node_modules/wrangler/config-schema.json",
+  "name": "bronze-banner",
+  "main": "worker.js",
+  "compatibility_date": "2026-05-13",
+  "assets": {
+    "directory": "./public"
+  },
+  "d1_databases": [
+    {
+      "binding": "DB",
+      "database_name": "bronze-banner-db",
+      // Create the database with `npx wrangler d1 create bronze-banner-db`
+      // and paste the returned ID into the field below.
+      "database_id": "6bc2aac7-66b5-4f48-adcc-8b1bbf86ce98",
+      "migrations_dir": "migrations"
+    }
+  ]
+}

@@ -1,0 +1,303 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Bronze Banner</title>
+    <link rel="stylesheet" href="./styles.css" />
+    <script src="./game.js" defer></script>
+  </head>
+  <body>
+    <section id="authView" class="auth-shell">
+      <div class="auth-backdrop"></div>
+      <div class="auth-panel-wrap">
+        <section class="auth-hero">
+          <p class="kicker">Multiplayer settlement sandbox</p>
+          <h1>Bronze Banner</h1>
+          <p class="lead">
+            Build your town, place every structure by hand, recruit expeditions,
+            survive raids, discover villages, and keep your progress on the backend
+            under your own account.
+          </p>
+        </section>
+
+        <section class="auth-grid">
+          <form id="loginForm" class="auth-card">
+            <p class="label">Login</p>
+            <h2>Return To Your Settlement</h2>
+            <input id="loginUsername" name="username" placeholder="Username" required />
+            <input
+              id="loginPassword"
+              name="password"
+              type="password"
+              placeholder="Password"
+              required
+            />
+            <button class="action-button" type="submit">Login</button>
+          </form>
+
+          <form id="registerForm" class="auth-card">
+            <p class="label">Sign Up</p>
+            <h2>Create A New Account</h2>
+            <input id="registerUsername" name="username" placeholder="Username" required />
+            <input
+              id="registerPassword"
+              name="password"
+              type="password"
+              placeholder="Password"
+              required
+            />
+            <button class="action-button alt" type="submit">Create Account</button>
+          </form>
+        </section>
+
+        <div id="authMessage" class="message-line"></div>
+      </div>
+    </section>
+
+    <div id="appView" class="shell hidden">
+      <header class="masthead">
+        <div class="masthead-copy">
+          <p class="kicker">Settlement sandbox clicker</p>
+          <h1>Bronze Banner</h1>
+          <p class="lead">
+            Expand your territory, customize your clickers and explorer roster,
+            discover villages with scouts, and hold off waves with warriors and
+            allied help.
+          </p>
+        </div>
+
+        <div class="masthead-side">
+          <article class="hero-stat">
+            <span>Player</span>
+            <strong id="playerName">Guest</strong>
+          </article>
+          <article class="hero-stat">
+            <span>Current Age</span>
+            <strong id="ageName">Camp</strong>
+          </article>
+          <article class="hero-stat">
+            <span>Villagers</span>
+            <strong id="villagerSummary">0 / 0</strong>
+          </article>
+          <article class="hero-stat">
+            <span>Explorer Level</span>
+            <strong id="explorerLevelSummary">1</strong>
+          </article>
+          <div class="top-actions">
+            <button id="manualSaveButton" class="ghost-button" type="button">
+              Save Now
+            </button>
+            <button id="logoutButton" class="ghost-button" type="button">
+              Logout
+            </button>
+          </div>
+        </div>
+      </header>
+
+      <section id="resourceRibbon" class="resource-ribbon"></section>
+
+      <section class="summary-grid">
+        <article class="summary-card">
+          <p class="label">Manual Clicking</p>
+          <h2 id="clickingSummary">1 action unlocked</h2>
+          <p id="clickingDetail" class="soft-text">
+            Influence is the first resource you can gather.
+          </p>
+        </article>
+
+        <article class="summary-card">
+          <p class="label">Automation</p>
+          <h2 id="productionSummary">0 / sec</h2>
+          <p id="productionDetail" class="soft-text">
+            No villagers are assigned yet.
+          </p>
+        </article>
+
+        <article class="summary-card">
+          <p class="label">Settlement</p>
+          <h2 id="settlementSummary">1 building</h2>
+          <p id="settlementDetail" class="soft-text">
+            Your banner camp is the first structure on the map.
+          </p>
+        </article>
+      </section>
+
+      <nav class="tab-bar" aria-label="Game tabs">
+        <button class="tab-button active" data-tab="clicker" type="button">Clicker</button>
+        <button class="tab-button" data-tab="workers" type="button">Workers</button>
+        <button class="tab-button" data-tab="civilisation" type="button">Civilisation</button>
+        <button class="tab-button" data-tab="explore" type="button">Explore</button>
+      </nav>
+
+      <main class="panel-stack">
+        <section class="tab-panel active" data-panel="clicker">
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Manual actions</p>
+                  <h2>Unlocked Clickers</h2>
+                </div>
+                <p class="soft-text">Buildings unlock new resource clickers as your town grows.</p>
+              </div>
+              <div id="clickerList" class="card-grid"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Clicker workshop</p>
+                  <h2>Customize And Scale</h2>
+                </div>
+              </div>
+              <div id="clickerWorkshop" class="workshop-stack"></div>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Next unlock</p>
+                  <h2>Progress Focus</h2>
+                </div>
+              </div>
+              <div id="milestoneCard" class="milestone-card"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Recent history</p>
+                  <h2>Chronicle</h2>
+                </div>
+              </div>
+              <div id="logList" class="log-list"></div>
+            </article>
+          </div>
+        </section>
+
+        <section class="tab-panel" data-panel="workers">
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Population</p>
+                  <h2>Hire Villagers</h2>
+                </div>
+              </div>
+              <div id="populationCard" class="population-card"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Assignments</p>
+                  <h2>Worker Jobs</h2>
+                </div>
+                <p class="soft-text">Workers can be reassigned at any time between available jobs.</p>
+              </div>
+              <div id="workerList" class="card-grid"></div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="label">Defense</p>
+                <h2>Warriors And Waves</h2>
+              </div>
+            </div>
+            <div id="combatCard" class="combat-card"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="civilisation">
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Blueprints</p>
+                  <h2>Choose A Structure</h2>
+                </div>
+                <p class="soft-text">
+                  Pick a structure, then tap an open tile to place it exactly where you want.
+                </p>
+              </div>
+              <div id="buildingList" class="card-grid"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Map and age</p>
+                  <h2>Expand Your Domain</h2>
+                </div>
+              </div>
+              <div id="ageProgressCard" class="age-progress-card"></div>
+              <div id="mapExpansionCard" class="map-expansion-card"></div>
+            </article>
+          </div>
+
+          <article class="panel">
+            <div class="panel-head">
+              <div>
+                <p class="label">Settlement map</p>
+                <h2>Placed Buildings</h2>
+              </div>
+            </div>
+            <div id="settlementGrid" class="settlement-grid"></div>
+          </article>
+        </section>
+
+        <section class="tab-panel" data-panel="explore">
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Roster</p>
+                  <h2>Explorers</h2>
+                </div>
+              </div>
+              <div id="explorerCard" class="explorer-card"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Crafting</p>
+                  <h2>Weapons And Armor</h2>
+                </div>
+                <p class="soft-text">Better expeditions need crafted gear before they unlock.</p>
+              </div>
+              <div id="craftingList" class="card-grid"></div>
+            </article>
+          </div>
+
+          <div class="two-column">
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Expeditions</p>
+                  <h2>Choose A Journey</h2>
+                </div>
+              </div>
+              <div id="expeditionList" class="card-grid"></div>
+            </article>
+
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Frontier</p>
+                  <h2>Missions And Villages</h2>
+                </div>
+              </div>
+              <div id="frontierCard" class="frontier-card"></div>
+            </article>
+          </div>
+        </section>
+      </main>
+    </div>
+  </body>
+</html>

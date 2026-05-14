@@ -1,0 +1,168 @@
+{
+  "users": [
+    {
+      "id": "30498b47-1dc6-42a6-9f5e-618516a546e1",
+      "username": "signupcheck1",
+      "salt": "b7933f6d8d1e8d40287d8aede7c209ff",
+      "hash": "04636f15a059f2e67f1107f759917d4db8da874604009e85381bb7a783c57de0cb9132c687511ad5bd75f66192f2328ecfd8657cf1536234f1d4fd27977a7fad",
+      "state": null,
+      "createdAt": "2026-05-14T00:43:06.386Z",
+      "updatedAt": "2026-05-14T00:43:06.386Z"
+    },
+    {
+      "id": "7b1943b5-ab83-4211-be8a-87bbe4eebd95",
+      "username": "signupcheck2",
+      "salt": "d57f88ff0e1bc2a6aeb4a5a3b230198a",
+      "hash": "c8f34352c00aa9d4cd30ce3abb53be5b4a026659da59cad52c5fc9f70aed01927332a69558a54573242bab3361aa167174af16595a9e52b47ff57507a4995eae",
+      "state": null,
+      "createdAt": "2026-05-14T00:44:05.848Z",
+      "updatedAt": "2026-05-14T00:44:05.848Z"
+    },
+    {
+      "id": "91213321-70e5-4090-a9b3-1d4a7a580a93",
+      "username": "signupcheck3",
+      "salt": "93ec9bede0c5778178ff364801ff9efd",
+      "hash": "d6405db82274dc585987649d107a744352978172d85ced0ea160bdf4df14cbbbc696e1a5788438da019793ee1a40b5da42b00186392b14e2c87dfba10e4d586a",
+      "state": null,
+      "createdAt": "2026-05-14T00:44:26.777Z",
+      "updatedAt": "2026-05-14T00:44:26.779Z"
+    },
+    {
+      "id": "4910f319-27c0-41e1-9726-e94343fd0125",
+      "username": "test1",
+      "salt": "13dee790b42e38eb5749c3532750711f",
+      "hash": "46ab812a67b07aa1cfc8c28e0b9f52f276f9f63ae4e59070e2f2a38cae4787f06009abbc352c30a3840c4c3fc1fd2a109aa6cde85c9a0e67e356b5c40b942962",
+      "state": {
+        "version": 4,
+        "activeTab": "clicker",
+        "age": 0,
+        "totalClicks": 6,
+        "mapExpansions": 0,
+        "pendingBuild": null,
+        "lastTick": 1778721907156,
+        "resources": {
+          "influence": 86,
+          "wood": 0,
+          "stone": 0,
+          "metal": 0,
+          "knowledge": 0
+        },
+        "workers": {
+          "total": 0,
+          "assignments": {
+            "influence": 0,
+            "wood": 0,
+            "stone": 0,
+            "metal": 0,
+            "knowledge": 0
+          }
+        },
+        "army": {
+          "warriors": 0
+        },
+        "clicker": {
+          "theme": "sun",
+          "burstLevel": 1,
+          "powerLevel": 0
+        },
+        "grid": [
+          null,
+          null,
+          "banner_camp",
+          null,
+          null,
+          null,
+          null,
+          null,
+          null,
+          null
+        ],
+        "explorers": {
+          "selectedId": "adventurer-1778719509003-z5upi5",
+          "roster": [
+            {
+              "id": "adventurer-1778719509003-z5upi5",
+              "name": "ari",
+              "type": "adventurer",
+              "archetype": "scout",
+              "cloak": "ember",
+              "accent": "bronze",
+              "xp": 0,
+              "crafted": {
+                "oak_spear": false,
+                "traveler_leathers": false,
+                "iron_blade": false,
+                "scale_mail": false
+              },
+              "equippedWeapon": null,
+              "equippedArmor": null,
+              "mission": null
+            }
+          ]
+        },
+        "world": {
+          "elapsedSeconds": 2398.145000000006,
+          "villageScoutUnlockAt": 446,
+          "villageScoutsUnlocked": true,
+          "villages": [],
+          "raid": {
+            "enabled": false,
+            "nextRaidAt": null,
+            "wavesSurvived": 0,
+            "lastRaid": null
+          }
+        },
+        "log": [
+          {
+            "time": 1778719955146,
+            "text": "Word spreads of skilled village scouts willing to search the frontier."
+          },
+          {
+            "time": 1778719527170,
+            "text": "Your settlement progressed for 7 seconds while you were away."
+          },
+          {
+            "time": 1778719518972,
+            "text": "Progress saved to the backend."
+          },
+          {
+            "time": 1778719518349,
+            "text": "Progress saved to the backend."
+          },
+          {
+            "time": 1778719511764,
+            "text": "Progress saved to the backend."
+          },
+          {
+            "time": 1778719509003,
+            "text": "A new banner camp rises. Influence is your only resource for now."
+          }
+        ]
+      },
+      "createdAt": "2026-05-14T00:45:08.985Z",
+      "updatedAt": "2026-05-14T01:25:07.170Z"
+    }
+  ],
+  "sessions": [
+    {
+      "token": "fa1650fa7111cb39871c017277184cbf97101961851483927291208e1e48f461",
+      "userId": "30498b47-1dc6-42a6-9f5e-618516a546e1",
+      "createdAt": "2026-05-14T00:43:06.386Z"
+    },
+    {
+      "token": "1468a1f456f50e6381de3659bdce83596f564b48c34ab7e050fae94648722a11",
+      "userId": "7b1943b5-ab83-4211-be8a-87bbe4eebd95",
+      "createdAt": "2026-05-14T00:44:05.848Z"
+    },
+    {
+      "token": "157e542e336596b9b5d61dd730fc7b334257118efd7cde3efd37455de0524b9a",
+      "userId": "91213321-70e5-4090-a9b3-1d4a7a580a93",
+      "createdAt": "2026-05-14T00:44:26.779Z"
+    },
+    {
+      "token": "6d6524d2df079a6124d12348e20a2cbbd66e7a303a3c8e8fef5d110c4323d39a",
+      "userId": "4910f319-27c0-41e1-9726-e94343fd0125",
+      "createdAt": "2026-05-14T00:45:27.148Z"
+    }
+  ]
+}
