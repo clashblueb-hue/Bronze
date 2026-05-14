@@ -39,7 +39,7 @@
         "totalClicks": 6,
         "mapExpansions": 0,
         "pendingBuild": null,
-        "lastTick": 1778723227165,
+        "lastTick": 1778724007171,
         "resources": {
           "influence": 86,
           "wood": 0,
@@ -101,7 +101,7 @@
           ]
         },
         "world": {
-          "elapsedSeconds": 3718.154000000005,
+          "elapsedSeconds": 4498.160000000005,
           "villageScoutUnlockAt": 446,
           "villageScoutsUnlocked": true,
           "villages": [],
@@ -140,7 +140,7 @@
         ]
       },
       "createdAt": "2026-05-14T00:45:08.985Z",
-      "updatedAt": "2026-05-14T01:47:07.184Z"
+      "updatedAt": "2026-05-14T02:00:07.191Z"
     }
   ],
   "sessions": [
