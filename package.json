@@ -7,7 +7,8 @@
     "deploy": "wrangler deploy",
     "db:migrate:local": "npx wrangler d1 migrations apply bronze-banner-db --local",
     "db:migrate:remote": "npx wrangler d1 migrations apply bronze-banner-db --remote",
-    "preview": "wrangler dev"
+    "preview": "wrangler dev",
+    "build": "echo 'No build required for static site'"
   },
   "devDependencies": {
     "wrangler": "^4.91.0"
