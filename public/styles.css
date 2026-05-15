@@ -888,3 +888,7 @@ select {
     transform: none;
   }
 }
+
+.auth-grid {
+  display: none !important;
+}

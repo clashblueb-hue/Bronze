@@ -6,72 +6,10 @@
     <title>Bronze Banner</title>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./game.js" defer></script>
-    <link rel="manifest" href="/manifest.json" />
+    <link rel="manifest" href="./manifest.json" />
   </head>
   <body>
-    <section id="authView" class="auth-shell">
-      <div class="auth-backdrop"></div>
-      <div class="auth-panel-wrap">
-        <section class="auth-hero">
-          <p class="kicker">Multiplayer settlement sandbox</p>
-          <h1>Bronze Banner</h1>
-          <p class="lead">
-            Build your town, place every structure by hand, recruit expeditions,
-            survive raids, discover villages, and keep your progress on the
-            backend under your own account.
-          </p>
-        </section>
-
-<<<<<<< HEAD
-=======
-        <section class="auth-grid">
-          <form id="loginForm" class="auth-card">
-            <p class="label">Login</p>
-            <h2>Return To Your Settlement</h2>
-            <input
-              id="loginUsername"
-              name="username"
-              placeholder="Username"
-              required
-            />
-            <input
-              id="loginPassword"
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-            />
-            <button class="action-button" type="submit">Login</button>
-          </form>
-
-          <form id="registerForm" class="auth-card">
-            <p class="label">Sign Up</p>
-            <h2>Create A New Account</h2>
-            <input
-              id="registerUsername"
-              name="username"
-              placeholder="Username"
-              required
-            />
-            <input
-              id="registerPassword"
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-            />
-            <button class="action-button alt" type="submit">
-              Create Account
-            </button>
-          </form>
-        </section>
-
->>>>>>> e898f9c94c8fc417a466fdbe9c316750a2414953
-        <div id="authMessage" class="message-line"></div>
-      </div>
-    </section>
-
-    <div id="appView" class="shell hidden">
+    <div id="appView" class="shell">
       <header class="masthead">
         <div class="masthead-copy">
           <p class="kicker">Settlement sandbox clicker</p>
@@ -103,9 +41,6 @@
           <div class="top-actions">
             <button id="manualSaveButton" class="ghost-button" type="button">
               Save Now
-            </button>
-            <button id="logoutButton" class="ghost-button" type="button">
-              Logout
             </button>
           </div>
         </div>

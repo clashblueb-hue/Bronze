@@ -8,28 +8,6 @@ const MAX_PLOTS = 35;
 const MAX_CLICK_BURST = 8;
 const MAX_CLICK_POWER = 6;
 
-const SAVE_KEY = "bronzeBannerOfflineSave";
-
-function saveGame() {
-  if (!state) return;
-
-  localStorage.setItem(
-    SAVE_KEY,
-    JSON.stringify(state)
-  );
-}
-
-function loadGame() {
-  const raw = localStorage.getItem(SAVE_KEY);
-
-  if (!raw) return null;
-
-  try {
-    return JSON.parse(raw);
-  } catch {
-    return null;
-  }
-}
 
 const resources = [
   { key: "influence", label: "Influence", short: "Influence" },
@@ -43,52 +21,6 @@ let state = null;
 let dirty = false;
 let saving = false;
 let lastFullRender = 0;
-
-
-
-
-
-
-
-
-
-
-
-UI.manualSaveButton.addEventListener("click", () => {
-  saveGame();
-  addLog("Game saved locally.");
-  renderAll();
-});
-
-
-
-
-
-setInterval(() => {
-  saveGame();
-}, 5000);
-
-
-
-
-Find:
-
-
-state = createDefaultState();
-
-
-
-
-
-const offlineSave = loadGame();
-
-if (offlineSave) {
-  state = offlineSave;
-} else {
-  state = createDefaultState();
-}
-
-
 function createEmptyResourceMap() {
   return Object.fromEntries(resources.map((resource) => [resource.key, 0]));
 }
@@ -121,58 +53,7 @@ function capitalize(value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
 
-export default {
-  async fetch(request, env) {
-    const url = new URL(request.url);
 
-    if (url.pathname === "/save" && request.method === "POST") {
-      const data = await request.json();
-
-      await env.GAME_KV.put("save", JSON.stringify(data));
-
-      return new Response("Saved");
-    }
-
-    if (url.pathname === "/load") {
-      const data = await env.GAME_KV.get("save");
-
-      return new Response(data || "null", {
-        headers: { "Content-Type": "application/json" }
-      });
-    }
-
-    return new Response("Not found", { status: 404 });
-  }
-};
-
-const CACHE_NAME = "game-v1";
-
-const FILES = [
-  "/",
-  "/index.html",
-  "/game.js",
-  "/styles.css"
-];
-
-self.addEventListener("install", (e) => {
-  e.waitUntil(
-    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES))
-  );
-});
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/sw.js");
-}
-
-self.addEventListener("fetch", (e) => {
-  e.respondWith(
-    caches.match(e.request).then(res => res || fetch(e.request))
-  );
-});
-
-if ("serviceWorker" in navigator) {
-  navigator.serviceWorker.register("/service-worker.js");
-}
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (character) => {
@@ -702,58 +583,7 @@ function processWorldEvents() {
       addLog(`${explorer.name} is back from ${explorer.mission.name} and ready to claim rewards.`);
     }
   }
-}async function syncToCloud(data) {
-  if (!navigator.onLine) return;
-
-  try {
-    await fetch("https://YOUR-WORKER-URL/save", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      body: JSON.stringify(data)
-    });
-  } catch (e) {
-    console.log("Cloud sync failed, staying local");
-  }
 }
-
-function saveGame(data) {
-  // ALWAYS save locally first (instant, offline-safe)
-  localStorage.setItem("gameSave", JSON.stringify(data));
-
-  // Then try cloud save if online
-  syncToCloud(data);
-}
-
-async function loadGame() {
-  // Try cloud first if online
-  if (navigator.onLine) {
-    try {
-      const res = await fetch("https://YOUR-WORKER-URL/load");
-      const data = await res.json();
-
-      if (data) {
-        localStorage.setItem("gameSave", JSON.stringify(data));
-        return data;
-      }
-    } catch (e) {}
-  }
-
-  // fallback to local
-  const local = localStorage.getItem("gameSave");
-  return local ? JSON.parse(local) : null;
-}
-
-window.addEventListener("online", () => {
-  const save = localStorage.getItem("gameSave");
-  if (!save) return;
-
-  fetch("https://YOUR-WORKER-URL/save", {
-    method: "POST",
-    headers: { "Content-Type": "application/json" },
-    body: save
-  });
-});
-
 function applyOfflineProgress() {
   const now = Date.now();
   const elapsedSeconds = Math.max(0, Math.min((now - state.lastTick) / 1000, 60 * 60 * 6));
@@ -791,7 +621,7 @@ function renderSummary() {
     .slice(0, 3);
   const mainExplorer = state.explorers.roster[0];
 
-  UI.playerName.textContent = currentUser.username;
+  UI.playerName.textContent = "Player";
   UI.ageName.textContent = ages[state.age].name;
   UI.villagerSummary.textContent = `${state.workers.total} / ${getWorkerCapacity()}`;
   UI.explorerLevelSummary.textContent = `${getExplorerLevel(mainExplorer)}`;
@@ -2006,7 +1836,7 @@ window.addEventListener("beforeunload", () => {
 });
 
 (function init() {
-  const offlineSave = loadGame();
+  const offlineSave = loadOffline();
 
   if (offlineSave) {
     state = normalizeState(offlineSave);
@@ -2019,7 +1849,7 @@ window.addEventListener("beforeunload", () => {
   renderAll();
 
   setInterval(() => {
-    saveGame();
+    saveOffline();
   }, 5000);
 })();
 
@@ -2029,13 +1859,3 @@ if ("serviceWorker" in navigator) {
   });
 }
 
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("/sw.js");
-  });
-<<<<<<< HEAD
-}
-=======
-}
->>>>>>> e898f9c94c8fc417a466fdbe9c316750a2414953

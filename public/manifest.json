@@ -1,21 +1,16 @@
-<<<<<<< HEAD
 {
   "name": "Bronze Banner",
   "short_name": "Bronze",
-  "start_url": "/",
+  "start_url": "./",
   "display": "standalone",
   "background_color": "#111111",
   "theme_color": "#111111",
-  "icons": []
+  "icons": [
+    {
+      "src": "./icon.svg",
+      "sizes": "192x192 512x512",
+      "type": "image/svg+xml",
+      "purpose": "any maskable"
+    }
+  ]
 }
-=======
-{
-  "name": "Bronze Banner",
-  "short_name": "Bronze",
-  "start_url": "/",
-  "display": "standalone",
-  "background_color": "#111111",
-  "theme_color": "#111111",
-  "icons": []
-}
->>>>>>> e898f9c94c8fc417a466fdbe9c316750a2414953
