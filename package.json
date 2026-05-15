@@ -4,8 +4,12 @@
   "private": true,
   "scripts": {
     "dev": "npx wrangler dev",
-    "deploy": "npx wrangler deploy",
+    "deploy": "wrangler deploy",
     "db:migrate:local": "npx wrangler d1 migrations apply bronze-banner-db --local",
-    "db:migrate:remote": "npx wrangler d1 migrations apply bronze-banner-db --remote"
+    "db:migrate:remote": "npx wrangler d1 migrations apply bronze-banner-db --remote",
+    "preview": "wrangler dev"
+  },
+  "devDependencies": {
+    "wrangler": "^4.91.0"
   }
 }
