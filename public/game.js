@@ -106,7 +106,9 @@ const UI = {
   expeditionList: document.getElementById("expeditionList"),
   frontierCard: document.getElementById("frontierCard"),
   logoutButton: document.getElementById("logoutButton"),
-  manualSaveButton: document.getElementById("manualSaveButton"),
+  exportSaveButton: document.getElementById("exportSaveButton"),
+  importSaveButton: document.getElementById("importSaveButton"),
+  importSaveInput: document.getElementById("importSaveInput"),
   tabButtons: Array.from(document.querySelectorAll(".tab-button")),
   tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
 };
@@ -288,42 +290,62 @@ function normalizeState(raw) {
   return merged;
 }
 
-function saveOffline() {
+
+
+function encryptSave(dataObj) {
+  const jsonStr = encodeURIComponent(JSON.stringify(dataObj));
+  let result = "";
+  for(let i = 0; i < jsonStr.length; i++) {
+    result += String.fromCharCode(jsonStr.charCodeAt(i) ^ 42);
+  }
+  return btoa(result);
+}
+
+function decryptSave(encodedStr) {
+  const decoded = atob(encodedStr);
+  let result = "";
+  for(let i = 0; i < decoded.length; i++) {
+    result += String.fromCharCode(decoded.charCodeAt(i) ^ 42);
+  }
+  return JSON.parse(decodeURIComponent(result));
+}
+
+UI.exportSaveButton.addEventListener("click", () => {
   if (!state) return;
+  const encrypted = encryptSave(state);
+  const blob = new Blob([encrypted], { type: "text/plain" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "bronze-banner.save";
+  a.click();
+  URL.revokeObjectURL(url);
+  addLog("Save state exported securely.");
+});
 
-  localStorage.setItem(
-    "bronzeBannerOfflineSave",
-    JSON.stringify(state)
-  );
-}
+UI.importSaveButton.addEventListener("click", () => {
+  UI.importSaveInput.click();
+});
 
-function loadOffline() {
-  const raw = localStorage.getItem("bronzeBannerOfflineSave");
+UI.importSaveInput.addEventListener("change", (event) => {
+  const file = event.target.files[0];
+  if (!file) return;
 
-  if (!raw) {
-    return createInitialState();
-  }
-
-  try {
-    return normalizeState(JSON.parse(raw));
-  } catch {
-    return createInitialState();
-  }
-}
-
-function markDirty() {
-  dirty = true;
-}
-
-function flushSave() {
-  saveOffline();
-  dirty = false;
-}
-
-UI.manualSaveButton.addEventListener("click", () => {
-  saveOffline();
-  addLog("Game saved locally.");
-  renderAll();
+  const reader = new FileReader();
+  reader.onload = (e) => {
+    try {
+      const rawText = e.target.result;
+      const parsed = decryptSave(rawText);
+      state = normalizeState(parsed);
+      applyOfflineProgress();
+      addLog("Save state imported successfully.");
+      renderAll();
+    } catch (err) {
+      addLog("Failed to import save. The file might be corrupted or invalid.");
+    }
+    UI.importSaveInput.value = "";
+  };
+  reader.readAsText(file);
 });
 
 function getBuildingDefinition(id) {
@@ -1921,30 +1943,9 @@ window.setInterval(() => {
   }
 }, 250);
 
-window.setInterval(() => {
-  flushSave();
-}, 5000);
-
-window.addEventListener("beforeunload", () => {
-  flushSave(true);
-});
-
 (function init() {
-  const offlineSave = loadOffline();
-
-  if (offlineSave) {
-    state = normalizeState(offlineSave);
-  } else {
-    state = createInitialState();
-  }
-
-  applyOfflineProgress();
-
+  state = createInitialState();
   renderAll();
-
-  setInterval(() => {
-    saveOffline();
-  }, 5000);
 })();
 
 if ("serviceWorker" in navigator) {
