@@ -6,6 +6,7 @@
     <title>Bronze Banner</title>
     <link rel="stylesheet" href="./styles.css" />
     <script src="./game.js" defer></script>
+    <link rel="manifest" href="/manifest.json" />
   </head>
   <body>
     <section id="authView" class="auth-shell">
@@ -16,39 +17,9 @@
           <h1>Bronze Banner</h1>
           <p class="lead">
             Build your town, place every structure by hand, recruit expeditions,
-            survive raids, discover villages, and keep your progress on the backend
-            under your own account.
+            survive raids, discover villages, and keep your progress on the
+            backend under your own account.
           </p>
-        </section>
-
-        <section class="auth-grid">
-          <form id="loginForm" class="auth-card">
-            <p class="label">Login</p>
-            <h2>Return To Your Settlement</h2>
-            <input id="loginUsername" name="username" placeholder="Username" required />
-            <input
-              id="loginPassword"
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-            />
-            <button class="action-button" type="submit">Login</button>
-          </form>
-
-          <form id="registerForm" class="auth-card">
-            <p class="label">Sign Up</p>
-            <h2>Create A New Account</h2>
-            <input id="registerUsername" name="username" placeholder="Username" required />
-            <input
-              id="registerPassword"
-              name="password"
-              type="password"
-              placeholder="Password"
-              required
-            />
-            <button class="action-button alt" type="submit">Create Account</button>
-          </form>
         </section>
 
         <div id="authMessage" class="message-line"></div>
@@ -124,10 +95,18 @@
       </section>
 
       <nav class="tab-bar" aria-label="Game tabs">
-        <button class="tab-button active" data-tab="clicker" type="button">Clicker</button>
-        <button class="tab-button" data-tab="workers" type="button">Workers</button>
-        <button class="tab-button" data-tab="civilisation" type="button">Civilisation</button>
-        <button class="tab-button" data-tab="explore" type="button">Explore</button>
+        <button class="tab-button active" data-tab="clicker" type="button">
+          Clicker
+        </button>
+        <button class="tab-button" data-tab="workers" type="button">
+          Workers
+        </button>
+        <button class="tab-button" data-tab="civilisation" type="button">
+          Civilisation
+        </button>
+        <button class="tab-button" data-tab="explore" type="button">
+          Explore
+        </button>
       </nav>
 
       <main class="panel-stack">
@@ -139,7 +118,9 @@
                   <p class="label">Manual actions</p>
                   <h2>Unlocked Clickers</h2>
                 </div>
-                <p class="soft-text">Buildings unlock new resource clickers as your town grows.</p>
+                <p class="soft-text">
+                  Buildings unlock new resource clickers as your town grows.
+                </p>
               </div>
               <div id="clickerList" class="card-grid"></div>
             </article>
@@ -196,7 +177,9 @@
                   <p class="label">Assignments</p>
                   <h2>Worker Jobs</h2>
                 </div>
-                <p class="soft-text">Workers can be reassigned at any time between available jobs.</p>
+                <p class="soft-text">
+                  Workers can be reassigned at any time between available jobs.
+                </p>
               </div>
               <div id="workerList" class="card-grid"></div>
             </article>
@@ -222,7 +205,8 @@
                   <h2>Choose A Structure</h2>
                 </div>
                 <p class="soft-text">
-                  Pick a structure, then tap an open tile to place it exactly where you want.
+                  Pick a structure, then tap an open tile to place it exactly
+                  where you want.
                 </p>
               </div>
               <div id="buildingList" class="card-grid"></div>
@@ -269,7 +253,9 @@
                   <p class="label">Crafting</p>
                   <h2>Weapons And Armor</h2>
                 </div>
-                <p class="soft-text">Better expeditions need crafted gear before they unlock.</p>
+                <p class="soft-text">
+                  Better expeditions need crafted gear before they unlock.
+                </p>
               </div>
               <div id="craftingList" class="card-grid"></div>
             </article>

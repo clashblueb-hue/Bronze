@@ -1,12 +1,35 @@
-const TOKEN_KEY = "bronze-banner-token";
-const API_BASE =
-  window.location.protocol === "file:" ? "http://127.0.0.1:8787" : "";
+
+
+
 const GRID_COLUMNS = 5;
 const INITIAL_PLOTS = 10;
 const EXPANSION_SIZE = 5;
 const MAX_PLOTS = 35;
 const MAX_CLICK_BURST = 8;
 const MAX_CLICK_POWER = 6;
+
+const SAVE_KEY = "bronzeBannerOfflineSave";
+
+function saveGame() {
+  if (!state) return;
+
+  localStorage.setItem(
+    SAVE_KEY,
+    JSON.stringify(state)
+  );
+}
+
+function loadGame() {
+  const raw = localStorage.getItem(SAVE_KEY);
+
+  if (!raw) return null;
+
+  try {
+    return JSON.parse(raw);
+  } catch {
+    return null;
+  }
+}
 
 const resources = [
   { key: "influence", label: "Influence", short: "Influence" },
@@ -16,118 +39,55 @@ const resources = [
   { key: "knowledge", label: "Knowledge", short: "Knowledge" },
 ];
 
-const jobs = [
-  { key: "influence", name: "Heralds", description: "Rally nearby people and generate more influence.", rate: 0.75 },
-  { key: "wood", name: "Lumberjacks", description: "Cut timber for homes, halls, and future expansions.", rate: 0.48 },
-  { key: "stone", name: "Quarry Crews", description: "Haul stone for tougher buildings and better gear.", rate: 0.3 },
-  { key: "metal", name: "Smiths", description: "Smelt ore and turn industry into metal.", rate: 0.18 },
-  { key: "knowledge", name: "Scribes", description: "Record discoveries and turn progress into knowledge.", rate: 0.12 },
-];
-
-const clickerDefs = [
-  { key: "influence", name: "Gather Influence", description: "Your first click action. It powers everything else.", yield: 1, unlockText: "Always available" },
-  { key: "wood", name: "Gather Wood", description: "Unlocked once you place a Lumber Camp.", yield: 1, unlockBuilding: "lumber_camp", unlockText: "Build a Lumber Camp" },
-  { key: "stone", name: "Gather Stone", description: "Unlocked once you place a Quarry.", yield: 1, unlockBuilding: "quarry", unlockText: "Build a Quarry" },
-  { key: "metal", name: "Forge Metal", description: "Unlocked once you place a Forge.", yield: 1, unlockBuilding: "forge", unlockText: "Build a Forge" },
-  { key: "knowledge", name: "Study Knowledge", description: "Unlocked once you place an Archive.", yield: 1, unlockBuilding: "archive", unlockText: "Build an Archive" },
-];
-
-const clickerThemes = [
-  { id: "sun", label: "Sun", swatch: "swatch-sun" },
-  { id: "forest", label: "Forest", swatch: "swatch-forest" },
-  { id: "forge", label: "Forge", swatch: "swatch-forge" },
-  { id: "royal", label: "Royal", swatch: "swatch-royal" },
-];
-
-const buildingDefs = [
-  { id: "banner_camp", name: "Banner Camp", description: "The starting camp. It anchors your town and opens basic influence work.", fixed: true, workerCap: 4, jobSlots: { influence: 3 }, tileTag: "Core" },
-  { id: "longhouse", name: "Longhouse", description: "Housing that raises how many villagers you can support.", cost: { influence: 55 }, workerCap: 6, jobSlots: {}, minAge: 0, tileTag: "Housing" },
-  { id: "lumber_camp", name: "Lumber Camp", description: "Unlocks wood clicking and creates slots for lumberjacks.", cost: { influence: 80 }, workerCap: 1, jobSlots: { wood: 3 }, minAge: 0, tileTag: "Wood" },
-  { id: "hall", name: "Meeting Hall", description: "A civic center that adds more influence-focused work.", cost: { influence: 150, wood: 40 }, workerCap: 1, jobSlots: { influence: 4 }, minAge: 1, tileTag: "Civic" },
-  { id: "quarry", name: "Quarry", description: "Unlocks stone clicking and creates stone gathering jobs.", cost: { influence: 180, wood: 65 }, workerCap: 1, jobSlots: { stone: 3 }, minAge: 1, tileTag: "Stone" },
-  { id: "forge", name: "Forge", description: "Unlocks metal clicking and smithing jobs.", cost: { influence: 320, wood: 90, stone: 70 }, workerCap: 1, jobSlots: { metal: 2 }, minAge: 2, tileTag: "Metal" },
-  { id: "archive", name: "Archive", description: "Unlocks knowledge clicking and advanced research jobs.", cost: { influence: 460, wood: 95, stone: 120, metal: 35 }, workerCap: 1, jobSlots: { knowledge: 2 }, minAge: 3, tileTag: "Knowledge" },
-];
-
-const ages = [
-  { name: "Camp", description: "A rough beginning where influence matters most.", unlocks: "Longhouses and Lumber Camps establish your first economy." },
-  { name: "Village", description: "Timber and housing turn the camp into something durable.", cost: { influence: 220, wood: 60 }, minBuildings: 4, unlocks: "Manual clicks gain 15 percent power and Quarries become available." },
-  { name: "Stronghold", description: "Stonework and structure give your settlement real weight.", cost: { influence: 640, wood: 170, stone: 95 }, minBuildings: 8, unlocks: "Workers gain 15 percent output and Forges become available." },
-  { name: "City", description: "Industry and planning reshape the entire settlement.", cost: { influence: 1650, stone: 250, metal: 100 }, minBuildings: 12, unlocks: "Manual clicks gain another 20 percent and Archives become available." },
-  { name: "Realm", description: "Knowledge and infrastructure bind your domain together.", cost: { influence: 3600, stone: 540, metal: 240, knowledge: 150 }, minBuildings: 16, unlocks: "All clicks and worker output gain 25 percent." },
-];
-
-const gearRecipes = [
-  { id: "oak_spear", name: "Oak Spear", slot: "weapon", description: "A dependable starter weapon for short trips beyond camp.", cost: { wood: 45, influence: 30 }, power: 2, minAge: 0 },
-  { id: "traveler_leathers", name: "Traveler Leathers", slot: "armor", description: "Basic protection for the road.", cost: { wood: 40, influence: 35 }, power: 2, minAge: 0 },
-  { id: "iron_blade", name: "Iron Blade", slot: "weapon", description: "A stronger weapon needed for deeper and riskier expeditions.", cost: { wood: 35, metal: 55, stone: 30 }, power: 4, minAge: 2 },
-  { id: "scale_mail", name: "Scale Mail", slot: "armor", description: "Sturdy armor for expeditions that push into hostile ground.", cost: { metal: 70, stone: 55, knowledge: 25 }, power: 4, minAge: 3 },
-];
-
-const expeditions = [
-  { id: "foragers_path", name: "Forager's Path", description: "A quick local route through brush and groves.", duration: 90, cost: { influence: 35 }, rewards: { influence: [18, 34], wood: [28, 48] }, xp: 28, minLevel: 1 },
-  { id: "stone_ridge", name: "Stone Ridge", description: "A rocky trail that pays well in stone and field notes.", duration: 150, cost: { influence: 55, wood: 20 }, rewards: { stone: [36, 64], knowledge: [8, 14] }, xp: 45, minLevel: 2, requiredWeapon: "oak_spear" },
-  { id: "ember_cavern", name: "Ember Cavern", description: "A hot industrial ruin with metal caches and real danger.", duration: 240, cost: { influence: 90, wood: 30, stone: 20 }, rewards: { metal: [34, 60], knowledge: [12, 20], influence: [22, 34] }, xp: 72, minLevel: 3, requiredWeapon: "iron_blade", requiredArmor: "traveler_leathers" },
-  { id: "sunken_archive", name: "Sunken Archive", description: "A difficult run that returns the best knowledge rewards.", duration: 360, cost: { influence: 130, stone: 50, metal: 35 }, rewards: { knowledge: [34, 62], metal: [18, 30], influence: [30, 46] }, xp: 100, minLevel: 4, requiredWeapon: "iron_blade", requiredArmor: "scale_mail" },
-];
-
-const archetypes = {
-  scout: { label: "Scout", durationMultiplier: 0.9, rewardMultiplier: 1, xpMultiplier: 1 },
-  warden: { label: "Warden", durationMultiplier: 1, rewardMultiplier: 1.12, xpMultiplier: 1 },
-  tinker: { label: "Tinker", durationMultiplier: 1, rewardMultiplier: 1, xpMultiplier: 1.12 },
-};
-
-const AUTH = {
-  authView: document.getElementById("authView"),
-  appView: document.getElementById("appView"),
-  authMessage: document.getElementById("authMessage"),
-  loginForm: document.getElementById("loginForm"),
-  registerForm: document.getElementById("registerForm"),
-  loginUsername: document.getElementById("loginUsername"),
-  loginPassword: document.getElementById("loginPassword"),
-  registerUsername: document.getElementById("registerUsername"),
-  registerPassword: document.getElementById("registerPassword"),
-};
-
-const UI = {
-  playerName: document.getElementById("playerName"),
-  ageName: document.getElementById("ageName"),
-  villagerSummary: document.getElementById("villagerSummary"),
-  explorerLevelSummary: document.getElementById("explorerLevelSummary"),
-  clickingSummary: document.getElementById("clickingSummary"),
-  clickingDetail: document.getElementById("clickingDetail"),
-  productionSummary: document.getElementById("productionSummary"),
-  productionDetail: document.getElementById("productionDetail"),
-  settlementSummary: document.getElementById("settlementSummary"),
-  settlementDetail: document.getElementById("settlementDetail"),
-  resourceRibbon: document.getElementById("resourceRibbon"),
-  clickerList: document.getElementById("clickerList"),
-  clickerWorkshop: document.getElementById("clickerWorkshop"),
-  milestoneCard: document.getElementById("milestoneCard"),
-  logList: document.getElementById("logList"),
-  populationCard: document.getElementById("populationCard"),
-  workerList: document.getElementById("workerList"),
-  combatCard: document.getElementById("combatCard"),
-  buildingList: document.getElementById("buildingList"),
-  ageProgressCard: document.getElementById("ageProgressCard"),
-  mapExpansionCard: document.getElementById("mapExpansionCard"),
-  settlementGrid: document.getElementById("settlementGrid"),
-  explorerCard: document.getElementById("explorerCard"),
-  craftingList: document.getElementById("craftingList"),
-  expeditionList: document.getElementById("expeditionList"),
-  frontierCard: document.getElementById("frontierCard"),
-  logoutButton: document.getElementById("logoutButton"),
-  manualSaveButton: document.getElementById("manualSaveButton"),
-  tabButtons: Array.from(document.querySelectorAll(".tab-button")),
-  tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
-};
-
-let authToken = localStorage.getItem(TOKEN_KEY) || "";
-let currentUser = null;
 let state = null;
 let dirty = false;
 let saving = false;
 let lastFullRender = 0;
+
+
+
+
+
+
+
+
+
+
+
+UI.manualSaveButton.addEventListener("click", () => {
+  saveGame();
+  addLog("Game saved locally.");
+  renderAll();
+});
+
+
+
+
+
+setInterval(() => {
+  saveGame();
+}, 5000);
+
+
+
+
+Find:
+
+
+state = createDefaultState();
+
+
+
+
+
+const offlineSave = loadGame();
+
+if (offlineSave) {
+  state = offlineSave;
+} else {
+  state = createDefaultState();
+}
+
 
 function createEmptyResourceMap() {
   return Object.fromEntries(resources.map((resource) => [resource.key, 0]));
@@ -159,6 +119,59 @@ function formatDuration(seconds) {
 
 function capitalize(value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
+}
+
+export default {
+  async fetch(request, env) {
+    const url = new URL(request.url);
+
+    if (url.pathname === "/save" && request.method === "POST") {
+      const data = await request.json();
+
+      await env.GAME_KV.put("save", JSON.stringify(data));
+
+      return new Response("Saved");
+    }
+
+    if (url.pathname === "/load") {
+      const data = await env.GAME_KV.get("save");
+
+      return new Response(data || "null", {
+        headers: { "Content-Type": "application/json" }
+      });
+    }
+
+    return new Response("Not found", { status: 404 });
+  }
+};
+
+const CACHE_NAME = "game-v1";
+
+const FILES = [
+  "/",
+  "/index.html",
+  "/game.js",
+  "/styles.css"
+];
+
+self.addEventListener("install", (e) => {
+  e.waitUntil(
+    caches.open(CACHE_NAME).then(cache => cache.addAll(FILES))
+  );
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/sw.js");
+}
+
+self.addEventListener("fetch", (e) => {
+  e.respondWith(
+    caches.match(e.request).then(res => res || fetch(e.request))
+  );
+});
+
+if ("serviceWorker" in navigator) {
+  navigator.serviceWorker.register("/service-worker.js");
 }
 
 function escapeHtml(value) {
@@ -300,167 +313,41 @@ function normalizeState(raw) {
   return merged;
 }
 
-async function api(path, options = {}) {
-  const headers = {
-    ...(options.body ? { "Content-Type": "application/json" } : {}),
-    ...(options.headers || {}),
-  };
+function saveOffline() {
+  if (!state) return;
 
-  if (authToken) {
-    headers.authorization = `Bearer ${authToken}`;
+  localStorage.setItem(
+    "bronzeBannerOfflineSave",
+    JSON.stringify(state)
+  );
+}
+
+function loadOffline() {
+  const raw = localStorage.getItem("bronzeBannerOfflineSave");
+
+  if (!raw) {
+    return createInitialState();
   }
 
-  let response;
   try {
-    response = await fetch(`${API_BASE}${path}`, { ...options, headers });
-  } catch (error) {
-    throw new Error(
-      "Cannot reach the game server. Start it with `npx wrangler dev`, then open the local Workers URL."
-    );
+    return normalizeState(JSON.parse(raw));
+  } catch {
+    return createInitialState();
   }
-  const raw = await response.text();
-  let data = {};
-
-  if (raw) {
-    try {
-      data = JSON.parse(raw);
-    } catch (error) {
-      throw new Error("Invalid server response.");
-    }
-  }
-
-  if (!response.ok) {
-    if (response.status === 401) {
-      clearSession();
-    }
-    throw new Error(data.message || "Request failed");
-  }
-
-  return data;
-}
-
-function setAuthMessage(text, type = "success") {
-  AUTH.authMessage.textContent = text;
-  AUTH.authMessage.className = `message-line ${type === "error" ? "message-error" : "message-success"}`;
-}
-
-function clearAuthMessage() {
-  AUTH.authMessage.textContent = "";
-  AUTH.authMessage.className = "message-line";
-}
-
-function showAuthView() {
-  AUTH.authView.classList.remove("hidden");
-  AUTH.appView.classList.add("hidden");
-}
-
-function showAppView() {
-  AUTH.authView.classList.add("hidden");
-  AUTH.appView.classList.remove("hidden");
 }
 
 function markDirty() {
   dirty = true;
 }
 
-async function flushSave(force = false) {
-  if (!currentUser || !state || saving || (!dirty && !force)) {
-    return;
-  }
-
-  saving = true;
-  try {
-    await api("/api/state", {
-      method: "PUT",
-      body: JSON.stringify({ state }),
-    });
-    dirty = false;
-  } catch (error) {
-    addLog(`Save warning: ${error.message}`);
-  } finally {
-    saving = false;
-  }
+function flushSave() {
+  saveOffline();
+  dirty = false;
 }
 
-function clearSession() {
-  authToken = "";
-  currentUser = null;
-  state = null;
-  localStorage.removeItem(TOKEN_KEY);
-  showAuthView();
-}
-
-async function loadGameState() {
-  const me = await api("/api/me", { method: "GET" });
-  currentUser = me.user;
-  UI.playerName.textContent = currentUser.username;
-
-  const data = await api("/api/state", { method: "GET" });
-  state = normalizeState(data.state);
-
-  if (!data.state) {
-    markDirty();
-    await flushSave(true);
-  }
-
-  applyOfflineProgress();
-  showAppView();
-  renderAll();
-}
-
-async function handleAuthSubmit(mode, username, password) {
-  clearAuthMessage();
-  const payload = {
-    username: username.trim(),
-    password,
-  };
-
-  const path = mode === "register" ? "/api/register" : "/api/login";
-  const data = await api(path, {
-    method: "POST",
-    body: JSON.stringify(payload),
-  });
-
-  authToken = data.token;
-  localStorage.setItem(TOKEN_KEY, authToken);
-  await loadGameState();
-  setAuthMessage(mode === "register" ? "Account created." : "Logged in.");
-}
-
-AUTH.loginForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  try {
-    await handleAuthSubmit("login", AUTH.loginUsername.value, AUTH.loginPassword.value);
-    AUTH.loginForm.reset();
-  } catch (error) {
-    setAuthMessage(error.message, "error");
-  }
-});
-
-AUTH.registerForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-  try {
-    await handleAuthSubmit("register", AUTH.registerUsername.value, AUTH.registerPassword.value);
-    AUTH.registerForm.reset();
-  } catch (error) {
-    setAuthMessage(error.message, "error");
-  }
-});
-
-UI.logoutButton.addEventListener("click", async () => {
-  try {
-    await flushSave(true);
-    await api("/api/logout", { method: "POST" });
-  } catch (error) {
-    // Ignore logout API failures and clear locally.
-  }
-  clearSession();
-});
-
-UI.manualSaveButton.addEventListener("click", async () => {
-  addLog("Progress saved to the backend.");
-  markDirty();
-  await flushSave(true);
+UI.manualSaveButton.addEventListener("click", () => {
+  saveOffline();
+  addLog("Game saved locally.");
   renderAll();
 });
 
@@ -815,7 +702,57 @@ function processWorldEvents() {
       addLog(`${explorer.name} is back from ${explorer.mission.name} and ready to claim rewards.`);
     }
   }
+}async function syncToCloud(data) {
+  if (!navigator.onLine) return;
+
+  try {
+    await fetch("https://YOUR-WORKER-URL/save", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(data)
+    });
+  } catch (e) {
+    console.log("Cloud sync failed, staying local");
+  }
 }
+
+function saveGame(data) {
+  // ALWAYS save locally first (instant, offline-safe)
+  localStorage.setItem("gameSave", JSON.stringify(data));
+
+  // Then try cloud save if online
+  syncToCloud(data);
+}
+
+async function loadGame() {
+  // Try cloud first if online
+  if (navigator.onLine) {
+    try {
+      const res = await fetch("https://YOUR-WORKER-URL/load");
+      const data = await res.json();
+
+      if (data) {
+        localStorage.setItem("gameSave", JSON.stringify(data));
+        return data;
+      }
+    } catch (e) {}
+  }
+
+  // fallback to local
+  const local = localStorage.getItem("gameSave");
+  return local ? JSON.parse(local) : null;
+}
+
+window.addEventListener("online", () => {
+  const save = localStorage.getItem("gameSave");
+  if (!save) return;
+
+  fetch("https://YOUR-WORKER-URL/save", {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: save
+  });
+});
 
 function applyOfflineProgress() {
   const now = Date.now();
@@ -2068,20 +2005,33 @@ window.addEventListener("beforeunload", () => {
   flushSave(true);
 });
 
-(async function init() {
-  showAuthView();
-  if (window.location.protocol === "file:") {
-    setAuthMessage(
-      "The backend version works best from the local Wrangler URL. If `wrangler dev` is running, signup and login will connect there.",
-      "success"
-    );
-  }
-  if (!authToken) return;
+(function init() {
+  const offlineSave = loadGame();
 
-  try {
-    await loadGameState();
-  } catch (error) {
-    clearSession();
-    setAuthMessage("Your session expired. Please log in again.", "error");
+  if (offlineSave) {
+    state = normalizeState(offlineSave);
+  } else {
+    state = createInitialState();
   }
+
+  applyOfflineProgress();
+
+  renderAll();
+
+  setInterval(() => {
+    saveGame();
+  }, 5000);
 })();
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("./sw.js");
+  });
+}
+
+
+if ("serviceWorker" in navigator) {
+  window.addEventListener("load", () => {
+    navigator.serviceWorker.register("/sw.js");
+  });
+}
