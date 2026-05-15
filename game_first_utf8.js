@@ -1,13 +1,12 @@
-
-
-
+const TOKEN_KEY = "bronze-banner-token";
+const API_BASE =
+  window.location.protocol === "file:" ? "http://127.0.0.1:8787" : "";
 const GRID_COLUMNS = 5;
 const INITIAL_PLOTS = 10;
 const EXPANSION_SIZE = 5;
 const MAX_PLOTS = 35;
 const MAX_CLICK_BURST = 8;
 const MAX_CLICK_POWER = 6;
-
 
 const resources = [
   { key: "influence", label: "Influence", short: "Influence" },
@@ -78,6 +77,18 @@ const archetypes = {
   tinker: { label: "Tinker", durationMultiplier: 1, rewardMultiplier: 1, xpMultiplier: 1.12 },
 };
 
+const AUTH = {
+  authView: document.getElementById("authView"),
+  appView: document.getElementById("appView"),
+  authMessage: document.getElementById("authMessage"),
+  loginForm: document.getElementById("loginForm"),
+  registerForm: document.getElementById("registerForm"),
+  loginUsername: document.getElementById("loginUsername"),
+  loginPassword: document.getElementById("loginPassword"),
+  registerUsername: document.getElementById("registerUsername"),
+  registerPassword: document.getElementById("registerPassword"),
+};
+
 const UI = {
   playerName: document.getElementById("playerName"),
   ageName: document.getElementById("ageName"),
@@ -111,10 +122,13 @@ const UI = {
   tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
 };
 
+let authToken = localStorage.getItem(TOKEN_KEY) || "";
+let currentUser = null;
 let state = null;
 let dirty = false;
 let saving = false;
 let lastFullRender = 0;
+
 function createEmptyResourceMap() {
   return Object.fromEntries(resources.map((resource) => [resource.key, 0]));
 }
@@ -146,8 +160,6 @@ function formatDuration(seconds) {
 function capitalize(value) {
   return value.charAt(0).toUpperCase() + value.slice(1);
 }
-
-
 
 function escapeHtml(value) {
   return String(value).replace(/[&<>"']/g, (character) => {
@@ -288,41 +300,167 @@ function normalizeState(raw) {
   return merged;
 }
 
-function saveOffline() {
-  if (!state) return;
+async function api(path, options = {}) {
+  const headers = {
+    ...(options.body ? { "Content-Type": "application/json" } : {}),
+    ...(options.headers || {}),
+  };
 
-  localStorage.setItem(
-    "bronzeBannerOfflineSave",
-    JSON.stringify(state)
-  );
+  if (authToken) {
+    headers.authorization = `Bearer ${authToken}`;
+  }
+
+  let response;
+  try {
+    response = await fetch(`${API_BASE}${path}`, { ...options, headers });
+  } catch (error) {
+    throw new Error(
+      "Cannot reach the game server. Start it with `npx wrangler dev`, then open the local Workers URL."
+    );
+  }
+  const raw = await response.text();
+  let data = {};
+
+  if (raw) {
+    try {
+      data = JSON.parse(raw);
+    } catch (error) {
+      throw new Error("Invalid server response.");
+    }
+  }
+
+  if (!response.ok) {
+    if (response.status === 401) {
+      clearSession();
+    }
+    throw new Error(data.message || "Request failed");
+  }
+
+  return data;
 }
 
-function loadOffline() {
-  const raw = localStorage.getItem("bronzeBannerOfflineSave");
+function setAuthMessage(text, type = "success") {
+  AUTH.authMessage.textContent = text;
+  AUTH.authMessage.className = `message-line ${type === "error" ? "message-error" : "message-success"}`;
+}
 
-  if (!raw) {
-    return createInitialState();
-  }
+function clearAuthMessage() {
+  AUTH.authMessage.textContent = "";
+  AUTH.authMessage.className = "message-line";
+}
 
-  try {
-    return normalizeState(JSON.parse(raw));
-  } catch {
-    return createInitialState();
-  }
+function showAuthView() {
+  AUTH.authView.classList.remove("hidden");
+  AUTH.appView.classList.add("hidden");
+}
+
+function showAppView() {
+  AUTH.authView.classList.add("hidden");
+  AUTH.appView.classList.remove("hidden");
 }
 
 function markDirty() {
   dirty = true;
 }
 
-function flushSave() {
-  saveOffline();
-  dirty = false;
+async function flushSave(force = false) {
+  if (!currentUser || !state || saving || (!dirty && !force)) {
+    return;
+  }
+
+  saving = true;
+  try {
+    await api("/api/state", {
+      method: "PUT",
+      body: JSON.stringify({ state }),
+    });
+    dirty = false;
+  } catch (error) {
+    addLog(`Save warning: ${error.message}`);
+  } finally {
+    saving = false;
+  }
 }
 
-UI.manualSaveButton.addEventListener("click", () => {
-  saveOffline();
-  addLog("Game saved locally.");
+function clearSession() {
+  authToken = "";
+  currentUser = null;
+  state = null;
+  localStorage.removeItem(TOKEN_KEY);
+  showAuthView();
+}
+
+async function loadGameState() {
+  const me = await api("/api/me", { method: "GET" });
+  currentUser = me.user;
+  UI.playerName.textContent = currentUser.username;
+
+  const data = await api("/api/state", { method: "GET" });
+  state = normalizeState(data.state);
+
+  if (!data.state) {
+    markDirty();
+    await flushSave(true);
+  }
+
+  applyOfflineProgress();
+  showAppView();
+  renderAll();
+}
+
+async function handleAuthSubmit(mode, username, password) {
+  clearAuthMessage();
+  const payload = {
+    username: username.trim(),
+    password,
+  };
+
+  const path = mode === "register" ? "/api/register" : "/api/login";
+  const data = await api(path, {
+    method: "POST",
+    body: JSON.stringify(payload),
+  });
+
+  authToken = data.token;
+  localStorage.setItem(TOKEN_KEY, authToken);
+  await loadGameState();
+  setAuthMessage(mode === "register" ? "Account created." : "Logged in.");
+}
+
+AUTH.loginForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await handleAuthSubmit("login", AUTH.loginUsername.value, AUTH.loginPassword.value);
+    AUTH.loginForm.reset();
+  } catch (error) {
+    setAuthMessage(error.message, "error");
+  }
+});
+
+AUTH.registerForm.addEventListener("submit", async (event) => {
+  event.preventDefault();
+  try {
+    await handleAuthSubmit("register", AUTH.registerUsername.value, AUTH.registerPassword.value);
+    AUTH.registerForm.reset();
+  } catch (error) {
+    setAuthMessage(error.message, "error");
+  }
+});
+
+UI.logoutButton.addEventListener("click", async () => {
+  try {
+    await flushSave(true);
+    await api("/api/logout", { method: "POST" });
+  } catch (error) {
+    // Ignore logout API failures and clear locally.
+  }
+  clearSession();
+});
+
+UI.manualSaveButton.addEventListener("click", async () => {
+  addLog("Progress saved to the backend.");
+  markDirty();
+  await flushSave(true);
   renderAll();
 });
 
@@ -678,6 +816,7 @@ function processWorldEvents() {
     }
   }
 }
+
 function applyOfflineProgress() {
   const now = Date.now();
   const elapsedSeconds = Math.max(0, Math.min((now - state.lastTick) / 1000, 60 * 60 * 6));
@@ -715,7 +854,7 @@ function renderSummary() {
     .slice(0, 3);
   const mainExplorer = state.explorers.roster[0];
 
-  UI.playerName.textContent = "Player";
+  UI.playerName.textContent = currentUser.username;
   UI.ageName.textContent = ages[state.age].name;
   UI.villagerSummary.textContent = `${state.workers.total} / ${getWorkerCapacity()}`;
   UI.explorerLevelSummary.textContent = `${getExplorerLevel(mainExplorer)}`;
@@ -1929,27 +2068,20 @@ window.addEventListener("beforeunload", () => {
   flushSave(true);
 });
 
-(function init() {
-  const offlineSave = loadOffline();
-
-  if (offlineSave) {
-    state = normalizeState(offlineSave);
-  } else {
-    state = createInitialState();
+(async function init() {
+  showAuthView();
+  if (window.location.protocol === "file:") {
+    setAuthMessage(
+      "The backend version works best from the local Wrangler URL. If `wrangler dev` is running, signup and login will connect there.",
+      "success"
+    );
   }
+  if (!authToken) return;
 
-  applyOfflineProgress();
-
-  renderAll();
-
-  setInterval(() => {
-    saveOffline();
-  }, 5000);
+  try {
+    await loadGameState();
+  } catch (error) {
+    clearSession();
+    setAuthMessage("Your session expired. Please log in again.", "error");
+  }
 })();
-
-if ("serviceWorker" in navigator) {
-  window.addEventListener("load", () => {
-    navigator.serviceWorker.register("./sw.js");
-  });
-}
-
