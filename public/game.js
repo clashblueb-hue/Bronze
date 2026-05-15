@@ -2034,4 +2034,8 @@ if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
     navigator.serviceWorker.register("/sw.js");
   });
+<<<<<<< HEAD
 }
+=======
+}
+>>>>>>> e898f9c94c8fc417a466fdbe9c316750a2414953
