@@ -15,6 +15,10 @@ const resources = [
   { key: "stone", label: "Stone", short: "Stone" },
   { key: "metal", label: "Metal", short: "Metal" },
   { key: "knowledge", label: "Knowledge", short: "Knowledge" },
+  { key: "gold", label: "Gold", short: "Gold" },
+  { key: "emerald", label: "Emerald", short: "Emerald" },
+  { key: "food", label: "Food", short: "Food" },
+  { key: "water", label: "Water", short: "Water" },
 ];
 
 const jobs = [
@@ -34,6 +38,7 @@ const clickerDefs = [
 ];
 
 const clickerThemes = [
+  { id: "galaxy", label: "Galaxy Blue", swatch: "swatch-galaxy" },
   { id: "sun", label: "Sun", swatch: "swatch-sun" },
   { id: "forest", label: "Forest", swatch: "swatch-forest" },
   { id: "forge", label: "Forge", swatch: "swatch-forge" },
@@ -42,20 +47,20 @@ const clickerThemes = [
 
 const buildingDefs = [
   { id: "banner_camp", name: "Banner Camp", description: "The starting camp. It anchors your town and opens basic influence work.", fixed: true, workerCap: 4, jobSlots: { influence: 3 }, tileTag: "Core" },
-  { id: "longhouse", name: "Longhouse", description: "Housing that raises how many villagers you can support.", cost: { influence: 55 }, workerCap: 6, jobSlots: {}, minAge: 0, tileTag: "Housing" },
-  { id: "lumber_camp", name: "Lumber Camp", description: "Unlocks wood clicking and creates slots for lumberjacks.", cost: { influence: 80 }, workerCap: 1, jobSlots: { wood: 3 }, minAge: 0, tileTag: "Wood" },
-  { id: "hall", name: "Meeting Hall", description: "A civic center that adds more influence-focused work.", cost: { influence: 150, wood: 40 }, workerCap: 1, jobSlots: { influence: 4 }, minAge: 1, tileTag: "Civic" },
-  { id: "quarry", name: "Quarry", description: "Unlocks stone clicking and creates stone gathering jobs.", cost: { influence: 180, wood: 65 }, workerCap: 1, jobSlots: { stone: 3 }, minAge: 1, tileTag: "Stone" },
-  { id: "forge", name: "Forge", description: "Unlocks metal clicking and smithing jobs.", cost: { influence: 320, wood: 90, stone: 70 }, workerCap: 1, jobSlots: { metal: 2 }, minAge: 2, tileTag: "Metal" },
-  { id: "archive", name: "Archive", description: "Unlocks knowledge clicking and advanced research jobs.", cost: { influence: 460, wood: 95, stone: 120, metal: 35 }, workerCap: 1, jobSlots: { knowledge: 2 }, minAge: 3, tileTag: "Knowledge" },
+  { id: "longhouse", name: "Longhouse", description: "Housing that raises how many villagers you can support.", cost: { influence: 40 }, workerCap: 6, jobSlots: {}, minAge: 0, tileTag: "Housing" },
+  { id: "lumber_camp", name: "Lumber Camp", description: "Unlocks wood clicking and creates slots for lumberjacks.", cost: { influence: 65 }, workerCap: 1, jobSlots: { wood: 3 }, minAge: 0, tileTag: "Wood" },
+  { id: "hall", name: "Meeting Hall", description: "A civic center that adds more influence-focused work.", cost: { influence: 220, wood: 60 }, workerCap: 1, jobSlots: { influence: 4 }, minAge: 1, tileTag: "Civic" },
+  { id: "quarry", name: "Quarry", description: "Unlocks stone clicking and creates stone gathering jobs.", cost: { influence: 280, wood: 95 }, workerCap: 1, jobSlots: { stone: 3 }, minAge: 1, tileTag: "Stone" },
+  { id: "forge", name: "Forge", description: "Unlocks metal clicking and smithing jobs.", cost: { influence: 520, wood: 160, stone: 120 }, workerCap: 1, jobSlots: { metal: 2 }, minAge: 2, tileTag: "Metal" },
+  { id: "archive", name: "Archive", description: "Unlocks knowledge clicking and advanced research jobs.", cost: { influence: 780, wood: 220, stone: 190, metal: 85 }, workerCap: 1, jobSlots: { knowledge: 2 }, minAge: 3, tileTag: "Knowledge" },
 ];
 
 const ages = [
   { name: "Camp", description: "A rough beginning where influence matters most.", unlocks: "Longhouses and Lumber Camps establish your first economy." },
-  { name: "Village", description: "Timber and housing turn the camp into something durable.", cost: { influence: 220, wood: 60 }, minBuildings: 4, unlocks: "Manual clicks gain 15 percent power and Quarries become available." },
-  { name: "Stronghold", description: "Stonework and structure give your settlement real weight.", cost: { influence: 640, wood: 170, stone: 95 }, minBuildings: 8, unlocks: "Workers gain 15 percent output and Forges become available." },
-  { name: "City", description: "Industry and planning reshape the entire settlement.", cost: { influence: 1650, stone: 250, metal: 100 }, minBuildings: 12, unlocks: "Manual clicks gain another 20 percent and Archives become available." },
-  { name: "Realm", description: "Knowledge and infrastructure bind your domain together.", cost: { influence: 3600, stone: 540, metal: 240, knowledge: 150 }, minBuildings: 16, unlocks: "All clicks and worker output gain 25 percent." },
+  { name: "Village", description: "Timber and housing turn the camp into something durable.", cost: { influence: 180, wood: 50 }, minBuildings: 4, unlocks: "Manual clicks gain 15 percent power and Quarries become available." },
+  { name: "Stronghold", description: "Stonework and structure give your settlement real weight.", cost: { influence: 950, wood: 240, stone: 160 }, minBuildings: 8, unlocks: "Workers gain 15 percent output and Forges become available." },
+  { name: "City", description: "Industry and planning reshape the entire settlement.", cost: { influence: 2600, stone: 480, metal: 220 }, minBuildings: 12, unlocks: "Manual clicks gain another 20 percent and Archives become available." },
+  { name: "Realm", description: "Knowledge and infrastructure bind your domain together.", cost: { influence: 6800, stone: 980, metal: 460, knowledge: 320 }, minBuildings: 16, unlocks: "All clicks and worker output gain 25 percent." },
 ];
 
 const gearRecipes = [
@@ -66,10 +71,13 @@ const gearRecipes = [
 ];
 
 const expeditions = [
-  { id: "foragers_path", name: "Forager's Path", description: "A quick local route through brush and groves.", duration: 90, cost: { influence: 35 }, rewards: { influence: [18, 34], wood: [28, 48] }, xp: 28, minLevel: 1 },
-  { id: "stone_ridge", name: "Stone Ridge", description: "A rocky trail that pays well in stone and field notes.", duration: 150, cost: { influence: 55, wood: 20 }, rewards: { stone: [36, 64], knowledge: [8, 14] }, xp: 45, minLevel: 2, requiredWeapon: "oak_spear" },
-  { id: "ember_cavern", name: "Ember Cavern", description: "A hot industrial ruin with metal caches and real danger.", duration: 240, cost: { influence: 90, wood: 30, stone: 20 }, rewards: { metal: [34, 60], knowledge: [12, 20], influence: [22, 34] }, xp: 72, minLevel: 3, requiredWeapon: "iron_blade", requiredArmor: "traveler_leathers" },
-  { id: "sunken_archive", name: "Sunken Archive", description: "A difficult run that returns the best knowledge rewards.", duration: 360, cost: { influence: 130, stone: 50, metal: 35 }, rewards: { knowledge: [34, 62], metal: [18, 30], influence: [30, 46] }, xp: 100, minLevel: 4, requiredWeapon: "iron_blade", requiredArmor: "scale_mail" },
+  { id: "foragers_path", name: "Forager's Path", description: "A quick local route through brush and groves.", duration: 90, cost: { influence: 25, food: 10, water: 8 }, rewards: { influence: [18, 34], wood: [28, 48] }, xp: 28, minLevel: 1 },
+  { id: "stone_ridge", name: "Stone Ridge", description: "A rocky trail that pays well in stone and field notes.", duration: 150, cost: { influence: 45, wood: 10, food: 18, water: 15 }, rewards: { stone: [36, 64], knowledge: [8, 14] }, xp: 45, minLevel: 2, requiredWeapon: "oak_spear" },
+  { id: "ember_cavern", name: "Ember Cavern", description: "A hot industrial ruin with metal caches and real danger.", duration: 240, cost: { influence: 75, wood: 20, stone: 15, food: 25, water: 22 }, rewards: { metal: [34, 60], knowledge: [12, 20], influence: [22, 34] }, xp: 72, minLevel: 3, requiredWeapon: "iron_blade", requiredArmor: "traveler_leathers" },
+  { id: "sunken_archive", name: "Sunken Archive", description: "A difficult run that returns the best knowledge rewards.", duration: 360, cost: { influence: 110, stone: 30, metal: 20, food: 35, water: 32 }, rewards: { knowledge: [34, 62], metal: [18, 30], influence: [30, 46] }, xp: 100, minLevel: 4, requiredWeapon: "iron_blade", requiredArmor: "scale_mail" },
+  { id: "celestial_outpost", name: "Celestial Outpost", description: "A floating station rich in cosmic energy and relics.", duration: 480, cost: { influence: 160, metal: 40, knowledge: 30, food: 50, water: 45 }, rewards: { gold: [50, 100], emerald: [3, 8], knowledge: [25, 45] }, xp: 150, minLevel: 5, requiredWeapon: "iron_blade", requiredArmor: "scale_mail" },
+  { id: "nebula_rift", name: "Nebula Rift", description: "A distorted cosmic rift yielding massive gold and mineral crystals.", duration: 600, cost: { influence: 220, metal: 60, knowledge: 50, food: 70, water: 65 }, rewards: { gold: [120, 250], emerald: [8, 18] }, xp: 220, minLevel: 6, requiredWeapon: "iron_blade", requiredArmor: "scale_mail" },
+  { id: "star_core_forge", name: "Star-Core Forge", description: "The ultimate expedition into an ancient star furnace.", duration: 900, cost: { influence: 350, metal: 100, knowledge: 80, food: 100, water: 90 }, rewards: { gold: [300, 600], emerald: [20, 45], knowledge: [60, 110] }, xp: 350, minLevel: 8, requiredWeapon: "iron_blade", requiredArmor: "scale_mail" },
 ];
 
 const archetypes = {
@@ -103,8 +111,12 @@ const UI = {
   settlementGrid: document.getElementById("settlementGrid"),
   explorerCard: document.getElementById("explorerCard"),
   craftingList: document.getElementById("craftingList"),
-  expeditionList: document.getElementById("expeditionList"),
+  expeditionList: document.getElementById("expeditionModalList"),
   frontierCard: document.getElementById("frontierCard"),
+  btnOpenExpeditionsModal: document.getElementById("btnOpenExpeditionsModal"),
+  expeditionModal: document.getElementById("expeditionModal"),
+  btnCloseExpeditionModal: document.getElementById("btnCloseExpeditionModal"),
+  expeditionStatusInline: document.getElementById("expeditionStatusInline"),
   tabButtons: Array.from(document.querySelectorAll(".tab-button")),
   tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
   logoutButton: document.getElementById("logoutButton"),
@@ -381,21 +393,54 @@ function createInitialState() {
   const mainExplorer = createExplorer("ari", "adventurer");
 
   return {
-    version: 4,
+    version: 6,
     activeTab: "clicker",
     age: 0,
     totalClicks: 0,
     mapExpansions: 0,
     pendingBuild: null,
     lastTick: Date.now(),
-    resources: { influence: 80, wood: 0, stone: 0, metal: 0, knowledge: 0 },
+    resources: { influence: 80, wood: 0, stone: 0, metal: 0, knowledge: 0, gold: 0, emerald: 0, food: 30, water: 30 },
     workers: { total: 0, assignments: createEmptyResourceMap() },
     army: { warriors: 0 },
-    clicker: { theme: "sun", burstLevel: 1, powerLevel: 0 },
+    clicker: { theme: "galaxy", burstLevel: 1, powerLevel: 0 },
     grid,
     explorers: {
       selectedId: mainExplorer.id,
       roster: [mainExplorer],
+    },
+    villageDefense: {
+      level: 1,
+      turretsActive: 0,
+      swordLevel: 0,
+      armorLevel: 0,
+      maxHp: 100,
+    },
+    villageRaid: {
+      active: false,
+      wave: 0,
+      monsters: [],
+      projectiles: [],
+      player: { x: 300, y: 200, hp: 100, maxHp: 100, lastAttack: 0 },
+      coreHp: 100,
+      timer: 600,
+      turretShootTimer: 0,
+      canvasWidth: 600,
+      canvasHeight: 400,
+    },
+    dungeon: {
+      unlocked: true,
+      currentDungeonId: "cavern",
+      floor: 1,
+      grid: null,
+      playerPos: { r: 0, c: 0 },
+      hp: 100,
+      maxHp: 100,
+      power: 10,
+      goldFound: 0,
+      emeraldsFound: 0,
+      cleared: false,
+      explorerId: null,
     },
     world: {
       elapsedSeconds: 0,
@@ -414,7 +459,7 @@ function createInitialState() {
 }
 
 function normalizeState(raw) {
-  if (!raw || raw.version !== 4) {
+  if (!raw || (raw.version !== 4 && raw.version !== 5 && raw.version !== 6)) {
     return createInitialState();
   }
 
@@ -422,6 +467,7 @@ function normalizeState(raw) {
   const merged = {
     ...initial,
     ...raw,
+    version: 6,
     resources: { ...initial.resources, ...(raw.resources || {}) },
     workers: {
       total: raw.workers?.total ?? initial.workers.total,
@@ -429,6 +475,9 @@ function normalizeState(raw) {
     },
     army: { ...initial.army, ...(raw.army || {}) },
     clicker: { ...initial.clicker, ...(raw.clicker || {}) },
+    villageDefense: { ...initial.villageDefense, ...(raw.villageDefense || {}) },
+    villageRaid: { ...initial.villageRaid, ...(raw.villageRaid || {}) },
+    dungeon: { ...initial.dungeon, ...(raw.dungeon || {}) },
     explorers: {
       selectedId: raw.explorers?.selectedId || initial.explorers.selectedId,
       roster: Array.isArray(raw.explorers?.roster) && raw.explorers.roster.length
@@ -553,18 +602,18 @@ function getAgeBonuses() {
 function getClickBurstUpgradeCost() {
   const nextLevel = state.clicker.burstLevel;
   return {
-    influence: Math.ceil(55 * 1.55 ** (nextLevel - 1)),
-    wood: nextLevel >= 3 ? Math.ceil(18 * 1.5 ** (nextLevel - 3)) : 0,
-    stone: nextLevel >= 5 ? Math.ceil(14 * 1.45 ** (nextLevel - 5)) : 0,
+    influence: Math.ceil(55 * 1.80 ** (nextLevel - 1)),
+    wood: nextLevel >= 3 ? Math.ceil(24 * 1.65 ** (nextLevel - 3)) : 0,
+    stone: nextLevel >= 5 ? Math.ceil(20 * 1.60 ** (nextLevel - 5)) : 0,
   };
 }
 
 function getClickPowerUpgradeCost() {
   const nextLevel = state.clicker.powerLevel + 1;
   return {
-    influence: Math.ceil(40 * 1.45 ** (nextLevel - 1)),
-    wood: nextLevel >= 2 ? Math.ceil(12 * 1.45 ** (nextLevel - 2)) : 0,
-    knowledge: nextLevel >= 4 ? Math.ceil(10 * 1.35 ** (nextLevel - 4)) : 0,
+    influence: Math.ceil(40 * 1.70 ** (nextLevel - 1)),
+    wood: nextLevel >= 2 ? Math.ceil(16 * 1.60 ** (nextLevel - 2)) : 0,
+    knowledge: nextLevel >= 4 ? Math.ceil(15 * 1.50 ** (nextLevel - 4)) : 0,
   };
 }
 
@@ -606,7 +655,7 @@ function getProductionPerSecond() {
 }
 
 function getHireCost() {
-  return { influence: Math.ceil(18 * 1.22 ** state.workers.total + state.workers.total * 3) };
+  return { influence: Math.ceil(12 * 1.28 ** state.workers.total + state.workers.total * 4) };
 }
 
 function getWarriorCost() {
@@ -1448,13 +1497,33 @@ function renderExplorer() {
       <button id="recruitExplorerButton" class="action-button" type="button" ${!canAfford(recruitCost) ? "disabled" : ""}>Recruit Adventurer</button>
       <span class="soft-text">${formatCostPills(recruitCost)}</span>
     </div>
+    <div class="provisions-market" style="margin-top: 20px; border-top: 1px solid rgba(56, 189, 248, 0.15); padding-top: 15px;">
+      <h3 style="margin-bottom: 8px;">Settlement Provisions</h3>
+      <p class="soft-text" style="margin-bottom: 12px; font-size: 13px;">Stock up on Food and Water using your Gold reserves before embarkation.</p>
+      <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 10px;">
+        <div class="upgrade-sub-card" style="padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 6px;">
+          <div>
+            <h4 style="font-size: 14px; margin-bottom: 4px; color: #fff;">Buy Food (+10)</h4>
+            <p class="soft-text" style="font-size: 12px; margin-bottom: 8px;">Cost: 15 Gold</p>
+          </div>
+          <button id="btnBuyFood" class="action-button alt" style="padding: 6px; font-size: 12px; width: 100%;" type="button" ${state.resources.gold >= 15 ? "" : "disabled"}>Buy Food</button>
+        </div>
+        <div class="upgrade-sub-card" style="padding: 12px; display: flex; flex-direction: column; justify-content: space-between; border-radius: 6px;">
+          <div>
+            <h4 style="font-size: 14px; margin-bottom: 4px; color: #fff;">Buy Water (+10)</h4>
+            <p class="soft-text" style="font-size: 12px; margin-bottom: 8px;">Cost: 10 Gold</p>
+          </div>
+          <button id="btnBuyWater" class="action-button alt" style="padding: 6px; font-size: 12px; width: 100%;" type="button" ${state.resources.gold >= 10 ? "" : "disabled"}>Buy Water</button>
+        </div>
+      </div>
+    </div>
     ${
       state.world.villageScoutsUnlocked
-        ? `<div class="cost-row">
+        ? `<div class="cost-row" style="margin-top: 15px;">
              <button id="recruitVillageScoutButton" class="action-button alt" type="button" ${!canAfford(scoutCost) ? "disabled" : ""}>Hire Village Scout</button>
              <span class="soft-text">${formatCostPills(scoutCost)}</span>
            </div>`
-        : `<div class="empty-note">Village scouts may appear at a random time after five minutes of in-game progress.</div>`
+        : `<div class="empty-note" style="margin-top: 15px;">Village scouts may appear at a random time after five minutes of in-game progress.</div>`
     }
   `;
 
@@ -1498,6 +1567,30 @@ function renderExplorer() {
     event.target.blur(); // Release focus to allow recreation
     renderExplorer();
   });
+
+  const btnBuyFood = document.getElementById("btnBuyFood");
+  if (btnBuyFood) {
+    btnBuyFood.addEventListener("click", () => {
+      if (state.resources.gold >= 15) {
+        state.resources.gold -= 15;
+        state.resources.food += 10;
+        addLog("Purchased 10 Food supplies for 15 Gold.");
+        renderAll();
+      }
+    });
+  }
+
+  const btnBuyWater = document.getElementById("btnBuyWater");
+  if (btnBuyWater) {
+    btnBuyWater.addEventListener("click", () => {
+      if (state.resources.gold >= 10) {
+        state.resources.gold -= 10;
+        state.resources.water += 10;
+        addLog("Purchased 10 Water supplies for 10 Gold.");
+        renderAll();
+      }
+    });
+  }
 
   const recruitExplorerButton = document.getElementById("recruitExplorerButton");
   if (recruitExplorerButton) recruitExplorerButton.addEventListener("click", recruitExplorer);
@@ -1574,8 +1667,19 @@ function getAdjustedDuration(explorer, duration) {
 function renderExpeditions() {
   const selected = getSelectedExplorer();
 
+  // 1. Update the inline status in the Explore tab panel
+  if (UI.expeditionStatusInline) {
+    if (selected.mission) {
+      const remaining = Math.max(0, Math.ceil((selected.mission.endsAt - Date.now()) / 1000));
+      UI.expeditionStatusInline.innerHTML = `<span style="color: var(--accent-alt); font-weight: bold;">Busy on: ${selected.mission.name} (${formatDuration(remaining)} remaining)</span>`;
+    } else {
+      UI.expeditionStatusInline.innerHTML = `<span style="color: #10b981; font-weight: bold;">Ready for journey</span>`;
+    }
+  }
+
+  // 2. Clear out modal contents or return if explorer is on mission
   if (selected.mission) {
-    UI.expeditionList.innerHTML = `<div class="empty-note">${escapeHtml(selected.name)} is already out on a mission.</div>`;
+    UI.expeditionList.innerHTML = `<div class="empty-note" style="grid-column: 1 / -1; text-align: center;">${escapeHtml(selected.name)} is already out on a mission.</div>`;
     return;
   }
 
@@ -1583,7 +1687,7 @@ function renderExpeditions() {
     const scoutCost = { influence: 90, wood: 45, stone: 20 };
     const duration = getAdjustedDuration(selected, 3600);
     UI.expeditionList.innerHTML = `
-      <article class="game-card">
+      <article class="game-card" style="grid-column: 1 / -1; max-width: 480px; margin: 0 auto;">
         <div class="card-top">
           <div>
             <h3>Search For Villages</h3>
@@ -1607,7 +1711,12 @@ function renderExpeditions() {
     return;
   }
 
-  UI.expeditionList.innerHTML = expeditions
+  // 3. Filter the expeditions list shown based on highest level explorer in roster
+  const highestLevel = Math.max(...state.explorers.roster.map(e => getExplorerLevel(e)));
+  // Show all expeditions where minLevel is up to highestLevel + 1 (the next target)
+  const shownExpeditions = expeditions.filter(exp => highestLevel >= exp.minLevel - 1);
+
+  UI.expeditionList.innerHTML = shownExpeditions
     .map((expedition) => {
       const unlocked = isExpeditionUnlocked(expedition, selected);
       const affordable = unlocked && canAfford(expedition.cost);
@@ -1629,8 +1738,8 @@ function renderExpeditions() {
             <span class="status-pill">Level ${expedition.minLevel}+</span>
             <span class="status-pill">XP ${expedition.xp}</span>
           </div>
-          <p class="soft-text">Rewards: ${rewardBits.join(" | ")}</p>
-          <div class="cost-row">${formatCostPills(expedition.cost)}</div>
+          <p class="soft-text" style="font-size: 13px; margin: 8px 0;">Rewards: ${rewardBits.join(" | ")}</p>
+          <div class="cost-row" style="margin-bottom: 12px;">${formatCostPills(expedition.cost)}</div>
           <button class="action-button" type="button" data-expedition="${expedition.id}" ${unlocked && affordable ? "" : "disabled"}>
             ${unlocked ? `Send ${escapeHtml(selected.name)}` : getExpeditionLockText(expedition, selected)}
           </button>
@@ -1748,6 +1857,13 @@ function renderAll() {
   renderCrafting();
   renderExpeditions();
   renderFrontier();
+  
+  // Custom village & dungeon renders
+  renderVillageShop();
+  renderDungeonGridUI();
+  updateNotificationBar();
+  startVillageCanvasLoop();
+
   lastFullRender = Date.now();
 }
 
@@ -1976,6 +2092,9 @@ function startExpedition(expeditionId) {
   if (duration === 0) addLog(`${selected.name} somehow returns instantly.`);
 
   renderAll();
+  if (UI.expeditionModal) {
+    UI.expeditionModal.classList.add("hidden");
+  }
 }
 
 function startVillageScoutMission(explorerId, cost) {
@@ -2000,6 +2119,9 @@ function startVillageScoutMission(explorerId, cost) {
   if (duration === 0) addLog(`${scout.name} somehow completes the search instantly.`);
 
   renderAll();
+  if (UI.expeditionModal) {
+    UI.expeditionModal.classList.add("hidden");
+  }
 }
 
 function generateVillageName() {
@@ -2058,12 +2180,941 @@ function setActiveTab(tab) {
   if (!state) return;
   state.activeTab = tab;
 
-  renderTabs();
+  renderAll();
 }
 
 UI.tabButtons.forEach((button) => {
   button.addEventListener("click", () => setActiveTab(button.dataset.tab));
 });
+
+if (UI.btnOpenExpeditionsModal) {
+  UI.btnOpenExpeditionsModal.addEventListener("click", () => {
+    if (UI.expeditionModal) {
+      UI.expeditionModal.classList.remove("hidden");
+      renderExpeditions();
+    }
+  });
+}
+
+if (UI.btnCloseExpeditionModal) {
+  UI.btnCloseExpeditionModal.addEventListener("click", () => {
+    if (UI.expeditionModal) {
+      UI.expeditionModal.classList.add("hidden");
+    }
+  });
+}
+
+if (UI.expeditionModal) {
+  UI.expeditionModal.addEventListener("click", (e) => {
+    if (e.target === UI.expeditionModal) {
+      UI.expeditionModal.classList.add("hidden");
+    }
+  });
+}
+
+// --- CUSTOM GALAXY COMBAT, SHOP AND DUNGEON SYSTEM ---
+
+const swordTiers = [
+  { name: "Wooden Stick", power: 12 },
+  { name: "Iron Sword", power: 25, cost: { gold: 80, emerald: 1 } },
+  { name: "Titanium Sword", power: 55, cost: { gold: 240, emerald: 4 } },
+  { name: "Galaxy Star-Blade", power: 120, cost: { gold: 600, emerald: 12 } }
+];
+
+const armorTiers = [
+  { name: "Tattered Clothes", hp: 100 },
+  { name: "Leather Mail", hp: 150, cost: { gold: 90, emerald: 1 } },
+  { name: "Steel Plate", hp: 250, cost: { gold: 280, emerald: 5 } },
+  { name: "Celestial Space-Armor", hp: 450, cost: { gold: 700, emerald: 15 } }
+];
+
+function getBaseUpgradeCost() {
+  const lvl = state.villageDefense.level;
+  return {
+    gold: Math.ceil(75 * 1.55 ** (lvl - 1)),
+    emerald: Math.ceil(12 * 1.45 ** (lvl - 1))
+  };
+}
+
+function getTurretCost() {
+  return { gold: 40 };
+}
+
+// Shop Actions
+function upgradeSword() {
+  const nextLvl = state.villageDefense.swordLevel + 1;
+  if (nextLvl >= swordTiers.length) return;
+  const cost = swordTiers[nextLvl].cost;
+  if (!canAfford(cost)) return;
+
+  spendResources(cost);
+  state.villageDefense.swordLevel = nextLvl;
+  addLog(`Cosmic Sword upgraded to ${swordTiers[nextLvl].name}! Attack power increased.`);
+  renderAll();
+}
+
+function upgradeArmor() {
+  const nextLvl = state.villageDefense.armorLevel + 1;
+  if (nextLvl >= armorTiers.length) return;
+  const cost = armorTiers[nextLvl].cost;
+  if (!canAfford(cost)) return;
+
+  spendResources(cost);
+  state.villageDefense.armorLevel = nextLvl;
+  addLog(`Celestial Armor upgraded to ${armorTiers[nextLvl].name}! Player HP increased.`);
+  renderAll();
+}
+
+function buyTurret() {
+  const activeTurrets = state.villageDefense.turretsActive;
+  if (activeTurrets >= 4) return;
+  const cost = getTurretCost();
+  if (!canAfford(cost)) return;
+
+  spendResources(cost);
+  state.villageDefense.turretsActive += 1;
+  addLog(`Defense turret purchased and deployed for the next wave.`);
+  renderAll();
+}
+
+function upgradeBaseDefense() {
+  const cost = getBaseUpgradeCost();
+  if (!canAfford(cost)) return;
+
+  spendResources(cost);
+  state.villageDefense.level += 1;
+  addLog(`Base defense leveled up to Level ${state.villageDefense.level}! Core Max HP and defenses improved.`);
+  renderAll();
+}
+
+function renderVillageShop() {
+  // Sword
+  const nextSwordLvl = state.villageDefense.swordLevel + 1;
+  const swordDesc = document.getElementById("swordUpgradeDesc");
+  const swordCost = document.getElementById("swordUpgradeCost");
+  const swordBtn = document.getElementById("btnUpgradeSword");
+
+  if (nextSwordLvl < swordTiers.length) {
+    const tier = swordTiers[nextSwordLvl];
+    swordDesc.innerHTML = `Current: <strong>${swordTiers[state.villageDefense.swordLevel].name}</strong><br>Next: <strong>${tier.name}</strong> (+${tier.power - swordTiers[state.villageDefense.swordLevel].power} Attack)`;
+    swordCost.innerHTML = formatCostPills(tier.cost);
+    swordBtn.disabled = !canAfford(tier.cost);
+  } else {
+    swordDesc.innerHTML = `Current: <strong>${swordTiers[state.villageDefense.swordLevel].name}</strong> (MAX TIER)`;
+    swordCost.innerHTML = "";
+    swordBtn.disabled = true;
+  }
+
+  // Armor
+  const nextArmorLvl = state.villageDefense.armorLevel + 1;
+  const armorDesc = document.getElementById("armorUpgradeDesc");
+  const armorCost = document.getElementById("armorUpgradeCost");
+  const armorBtn = document.getElementById("btnUpgradeArmor");
+
+  if (nextArmorLvl < armorTiers.length) {
+    const tier = armorTiers[nextArmorLvl];
+    armorDesc.innerHTML = `Current: <strong>${armorTiers[state.villageDefense.armorLevel].name}</strong><br>Next: <strong>${tier.name}</strong> (+${tier.hp - armorTiers[state.villageDefense.armorLevel].hp} HP)`;
+    armorCost.innerHTML = formatCostPills(tier.cost);
+    armorBtn.disabled = !canAfford(tier.cost);
+  } else {
+    armorDesc.innerHTML = `Current: <strong>${armorTiers[state.villageDefense.armorLevel].name}</strong> (MAX TIER)`;
+    armorCost.innerHTML = "";
+    armorBtn.disabled = true;
+  }
+
+  // Turrets
+  const turretDesc = document.getElementById("turretCountDesc");
+  const turretCost = document.getElementById("turretCostWrap");
+  const turretBtn = document.getElementById("btnBuyTurret");
+  const activeTurrets = state.villageDefense.turretsActive;
+  turretDesc.innerHTML = `Turrets deployed: <strong>${activeTurrets} / 4</strong>`;
+  
+  if (activeTurrets < 4) {
+    const cost = getTurretCost();
+    turretCost.innerHTML = formatCostPills(cost);
+    turretBtn.disabled = !canAfford(cost);
+  } else {
+    turretCost.innerHTML = "";
+    turretBtn.disabled = true;
+  }
+
+  // Permanent Base
+  const baseDesc = document.getElementById("baseLevelDesc");
+  const baseCost = document.getElementById("baseLevelCost");
+  const baseBtn = document.getElementById("btnUpgradeBaseDefense");
+  const lvl = state.villageDefense.level;
+  const coreMaxHp = 100 + (lvl - 1) * 30;
+  baseDesc.innerHTML = `Defense Level: <strong>${lvl}</strong><br>+${(lvl - 1) * 20}% Turret Fire Rate<br>Core HP Capacity: <strong>${coreMaxHp}</strong>`;
+  const cost = getBaseUpgradeCost();
+  baseCost.innerHTML = formatCostPills(cost);
+  baseBtn.disabled = !canAfford(cost);
+}
+
+// 2D VILLAGE ACTIVE RAID WASD GAME LOOP
+const keysPressed = {};
+let canvasAnimationFrame = null;
+
+function startVillageCanvasLoop() {
+  if (canvasAnimationFrame) return;
+  
+  function loop() {
+    if (state && state.activeTab === "village") {
+      updateVillagePhysics();
+      drawVillageCanvas();
+      canvasAnimationFrame = requestAnimationFrame(loop);
+    } else {
+      canvasAnimationFrame = null;
+    }
+  }
+  
+  canvasAnimationFrame = requestAnimationFrame(loop);
+}
+
+function setupRaidControls() {
+  window.addEventListener("keydown", (e) => {
+    if (state && state.activeTab === "village") {
+      if (["Space", "ArrowUp", "ArrowDown", "ArrowLeft", "ArrowRight"].includes(e.code)) {
+        e.preventDefault();
+      }
+    }
+    keysPressed[e.code] = true;
+    if (e.code === "Space") {
+      playerAttack();
+    }
+  });
+
+  window.addEventListener("keyup", (e) => {
+    keysPressed[e.code] = false;
+  });
+
+  // Mobile controls mapping
+  const bindDpad = (id, key) => {
+    const btn = document.getElementById(id);
+    if (!btn) return;
+    btn.addEventListener("mousedown", () => { keysPressed[key] = true; });
+    btn.addEventListener("mouseup", () => { keysPressed[key] = false; });
+    btn.addEventListener("touchstart", (e) => { e.preventDefault(); keysPressed[key] = true; });
+    btn.addEventListener("touchend", (e) => { e.preventDefault(); keysPressed[key] = false; });
+  };
+
+  bindDpad("dpadUp", "KeyW");
+  bindDpad("dpadDown", "KeyS");
+  bindDpad("dpadLeft", "KeyA");
+  bindDpad("dpadRight", "KeyD");
+
+  const swingBtn = document.getElementById("dpadSwing");
+  if (swingBtn) swingBtn.addEventListener("click", playerAttack);
+}
+
+function playerAttack() {
+  if (!state || !state.villageRaid.active) return;
+  const now = Date.now();
+  if (now - state.villageRaid.player.lastAttack < 250) return; // attack cooldown
+  state.villageRaid.player.lastAttack = now;
+
+  const p = state.villageRaid.player;
+  const wPower = swordTiers[state.villageDefense.swordLevel].power;
+  const attackRange = 55;
+
+  state.villageRaid.monsters.forEach((mon) => {
+    const dx = mon.x - p.x;
+    const dy = mon.y - p.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    if (dist < attackRange) {
+      mon.hp = Math.max(0, mon.hp - wPower);
+      // Spawn hit particles
+      for (let i = 0; i < 6; i++) {
+        spawnSpark(mon.x, mon.y, "#38bdf8");
+      }
+    }
+  });
+}
+
+let canvasParticles = [];
+function spawnSpark(x, y, color) {
+  canvasParticles.push({
+    x, y,
+    vx: (Math.random() - 0.5) * 4,
+    vy: (Math.random() - 0.5) * 4,
+    life: 25,
+    color
+  });
+}
+
+function updateVillagePhysics() {
+  if (!state) return;
+  
+  // 1. Move Player
+  const p = state.villageRaid.player;
+  const pSpeed = 4.2;
+  if (keysPressed["KeyW"] || keysPressed["ArrowUp"]) p.y -= pSpeed;
+  if (keysPressed["KeyS"] || keysPressed["ArrowDown"]) p.y += pSpeed;
+  if (keysPressed["KeyA"] || keysPressed["ArrowLeft"]) p.x -= pSpeed;
+  if (keysPressed["KeyD"] || keysPressed["ArrowRight"]) p.x += pSpeed;
+
+  p.x = Math.max(12, Math.min(588, p.x));
+  p.y = Math.max(12, Math.min(388, p.y));
+
+  // 2. Sparks physics
+  canvasParticles.forEach((spk) => {
+    spk.x += spk.vx;
+    spk.y += spk.vy;
+    spk.life--;
+  });
+  canvasParticles = canvasParticles.filter((spk) => spk.life > 0);
+
+  if (!state.villageRaid.active) return;
+
+  // 3. Spawns monsters
+  const vr = state.villageRaid;
+  const totalToSpawn = 8 + vr.wave * 4;
+  const currentSpawned = vr.monsters.length + vr.monstersDefeated;
+  
+  if (currentSpawned < totalToSpawn && Math.random() < 0.02) {
+    let x, y;
+    if (Math.random() < 0.5) {
+      x = Math.random() < 0.5 ? 0 : 600;
+      y = Math.random() * 400;
+    } else {
+      x = Math.random() * 600;
+      y = Math.random() < 0.5 ? 0 : 400;
+    }
+    vr.monsters.push({
+      x, y,
+      hp: 18 + vr.wave * 8,
+      maxHp: 18 + vr.wave * 8,
+      speed: 0.9 + Math.random() * 0.7,
+      size: 11
+    });
+  }
+
+  // 4. Turrets shooting lasers
+  const turretSlotsCount = state.villageDefense.turretsActive;
+  const turretCoords = [
+    { x: 50, y: 200 },
+    { x: 550, y: 200 },
+    { x: 300, y: 50 },
+    { x: 300, y: 350 }
+  ];
+
+  vr.turretShootTimer++;
+  const fireInterval = Math.max(12, 35 - state.villageDefense.level * 2);
+
+  if (vr.turretShootTimer >= fireInterval) {
+    vr.turretShootTimer = 0;
+    for (let i = 0; i < turretSlotsCount; i++) {
+      const turret = turretCoords[i];
+      if (vr.monsters.length > 0) {
+        let closest = vr.monsters[0];
+        let minDist = Infinity;
+        vr.monsters.forEach((mon) => {
+          const dx = mon.x - turret.x;
+          const dy = mon.y - turret.y;
+          const d = dx * dx + dy * dy;
+          if (d < minDist) {
+            minDist = d;
+            closest = mon;
+          }
+        });
+
+        const angle = Math.atan2(closest.y - turret.y, closest.x - turret.x);
+        vr.projectiles.push({
+          x: turret.x,
+          y: turret.y,
+          vx: Math.cos(angle) * 7.5,
+          vy: Math.sin(angle) * 7.5,
+          damage: 16 + state.villageDefense.level * 3
+        });
+      }
+    }
+  }
+
+  // 5. Update projectiles
+  vr.projectiles.forEach((proj) => {
+    proj.x += proj.vx;
+    proj.y += proj.vy;
+  });
+  vr.projectiles = vr.projectiles.filter((proj) => proj.x >= 0 && proj.x <= 600 && proj.y >= 0 && proj.y <= 400);
+
+  // 6. Move Monsters towards Core (300, 200)
+  vr.monsters.forEach((mon) => {
+    const dx = 300 - mon.x;
+    const dy = 200 - mon.y;
+    const dist = Math.sqrt(dx * dx + dy * dy);
+    
+    if (dist > 15) {
+      mon.x += (dx / dist) * mon.speed;
+      mon.y += (dy / dist) * mon.speed;
+    } else {
+      mon.hp = 0;
+      vr.coreHp = Math.max(0, vr.coreHp - 10);
+      addLog(`Raid Monster breached core! Core HP reduced by 10.`);
+      for (let i = 0; i < 8; i++) spawnSpark(300, 200, "#f43f5e");
+    }
+
+    // Player collision
+    const pdx = p.x - mon.x;
+    const pdy = p.y - mon.y;
+    const pdist = Math.sqrt(pdx * pdx + pdy * pdy);
+    if (pdist < 18) {
+      const pMax = armorTiers[state.villageDefense.armorLevel].hp;
+      p.hp = Math.max(0, p.hp - 0.6);
+      if (p.hp <= 0) {
+        addLog(`Defender knocked down! Respawning at center.`);
+        p.x = 300;
+        p.y = 200;
+        p.hp = pMax;
+      }
+    }
+  });
+
+  // Filter defeated
+  const beforeCount = vr.monsters.length;
+  vr.monsters = vr.monsters.filter((mon) => mon.hp > 0);
+  const defeatedInFrame = beforeCount - vr.monsters.length;
+  if (!vr.monstersDefeated) vr.monstersDefeated = 0;
+  vr.monstersDefeated += defeatedInFrame;
+
+  // Lasers hit check
+  vr.projectiles.forEach((proj) => {
+    vr.monsters.forEach((mon) => {
+      const dx = mon.x - proj.x;
+      const dy = mon.y - proj.y;
+      const dist = Math.sqrt(dx * dx + dy * dy);
+      if (dist < 18) {
+        mon.hp -= proj.damage;
+        proj.damage = 0; // consume
+        for (let i = 0; i < 3; i++) spawnSpark(proj.x, proj.y, "#d946ef");
+      }
+    });
+  });
+  vr.projectiles = vr.projectiles.filter((proj) => proj.damage > 0);
+
+  // Core HP check
+  if (vr.coreHp <= 0) {
+    vr.active = false;
+    vr.monsters = [];
+    vr.projectiles = [];
+    state.villageDefense.turretsActive = 0;
+    
+    const woodLoss = Math.floor(state.resources.wood * 0.1);
+    const metalLoss = Math.floor(state.resources.metal * 0.1);
+    state.resources.wood -= woodLoss;
+    state.resources.metal -= metalLoss;
+    
+    addLog(`FAIL! Core destroyed! Lost ${woodLoss} Wood and ${metalLoss} Metal.`);
+    updateNotificationBar();
+    renderAll();
+    return;
+  }
+
+  // Wave cleared check
+  if (vr.monstersDefeated >= totalToSpawn && vr.monsters.length === 0) {
+    vr.active = false;
+    vr.monsters = [];
+    vr.projectiles = [];
+    state.villageDefense.turretsActive = 0;
+    
+    const goldPill = 50 + vr.wave * 12;
+    const emeraldPill = 4 + vr.wave * 2;
+    state.resources.gold += goldPill;
+    state.resources.emerald += emeraldPill;
+    vr.wave += 1;
+    
+    addLog(`VICTORY! Wave ${vr.wave} defended successfully! Gained +${goldPill} Gold and +${emeraldPill} Emeralds!`);
+    updateNotificationBar();
+    renderAll();
+  }
+}
+
+function drawVillageCanvas() {
+  const canvas = document.getElementById("villageCanvas");
+  if (!canvas) return;
+  const ctx = canvas.getContext("2d");
+  const w = canvas.width;
+  const h = canvas.height;
+
+  ctx.clearRect(0, 0, w, h);
+
+  // Background neon grids
+  ctx.strokeStyle = "rgba(56, 189, 248, 0.05)";
+  ctx.lineWidth = 1;
+  const gSize = 40;
+  for (let x = 0; x < w; x += gSize) {
+    ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, h); ctx.stroke();
+  }
+  for (let y = 0; y < h; y += gSize) {
+    ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(w, y); ctx.stroke();
+  }
+
+  // Center glowing energy core
+  const pulse = Math.sin(Date.now() / 200) * 4;
+  ctx.shadowBlur = 15 + pulse;
+  ctx.shadowColor = "#f59e0b";
+  ctx.fillStyle = "rgba(245, 158, 11, 0.15)";
+  ctx.beginPath(); ctx.arc(300, 200, 45 + pulse, 0, Math.PI * 2); ctx.fill();
+
+  ctx.fillStyle = "#f59e0b";
+  ctx.beginPath(); ctx.arc(300, 200, 18, 0, Math.PI * 2); ctx.fill();
+
+  ctx.strokeStyle = "rgba(245, 158, 11, 0.6)";
+  ctx.lineWidth = 2;
+  ctx.beginPath();
+  ctx.arc(300, 200, 32, (Date.now() / 400) % (Math.PI * 2), ((Date.now() / 400) + Math.PI) % (Math.PI * 2));
+  ctx.stroke();
+
+  // Active turrets
+  const turretCoords = [
+    { x: 50, y: 200 },
+    { x: 550, y: 200 },
+    { x: 300, y: 50 },
+    { x: 300, y: 350 }
+  ];
+  ctx.shadowColor = "#0ea5e9";
+  ctx.fillStyle = "#38bdf8";
+  for (let i = 0; i < state.villageDefense.turretsActive; i++) {
+    const turret = turretCoords[i];
+    ctx.beginPath();
+    ctx.moveTo(turret.x, turret.y - 12);
+    ctx.lineTo(turret.x - 12, turret.y + 10);
+    ctx.lineTo(turret.x + 12, turret.y + 10);
+    ctx.closePath();
+    ctx.fill();
+  }
+
+  // Lasers
+  ctx.shadowColor = "#d946ef";
+  ctx.strokeStyle = "#fda4af";
+  ctx.lineWidth = 3.5;
+  state.villageRaid.projectiles.forEach((proj) => {
+    ctx.beginPath();
+    ctx.moveTo(proj.x, proj.y);
+    ctx.lineTo(proj.x - proj.vx * 1.5, proj.y - proj.vy * 1.5);
+    ctx.stroke();
+  });
+
+  // Monsters
+  ctx.shadowColor = "#f43f5e";
+  ctx.fillStyle = "#f43f5e";
+  state.villageRaid.monsters.forEach((mon) => {
+    ctx.beginPath(); ctx.arc(mon.x, mon.y, mon.size, 0, Math.PI * 2); ctx.fill();
+
+    // legs
+    ctx.strokeStyle = "rgba(244, 63, 94, 0.5)";
+    ctx.lineWidth = 2;
+    for (let i = 0; i < 8; i++) {
+      const legAngle = (i * Math.PI) / 4 + Math.sin(Date.now() / 80 + i) * 0.12;
+      ctx.beginPath();
+      ctx.moveTo(mon.x, mon.y);
+      ctx.lineTo(mon.x + Math.cos(legAngle) * (mon.size + 7), mon.y + Math.sin(legAngle) * (mon.size + 7));
+      ctx.stroke();
+    }
+
+    // bar
+    const bW = 22;
+    const hpPct = mon.hp / mon.maxHp;
+    ctx.fillStyle = "rgba(0, 0, 0, 0.6)";
+    ctx.fillRect(mon.x - bW / 2, mon.y - 17, bW, 4);
+    ctx.fillStyle = "#f43f5e";
+    ctx.fillRect(mon.x - bW / 2, mon.y - 17, bW * hpPct, 4);
+  });
+
+  // Player
+  const p = state.villageRaid.player;
+  const pMaxHp = armorTiers[state.villageDefense.armorLevel].hp;
+  ctx.shadowColor = "#38bdf8";
+  ctx.fillStyle = "#38bdf8";
+  ctx.beginPath(); ctx.arc(p.x, p.y, 14, 0, Math.PI * 2); ctx.fill();
+
+  // Attack arc
+  const attackDur = Date.now() - p.lastAttack;
+  if (attackDur < 180) {
+    ctx.strokeStyle = "rgba(56, 189, 248, 0.85)";
+    ctx.shadowColor = "#38bdf8";
+    ctx.lineWidth = 4;
+    ctx.beginPath(); ctx.arc(p.x, p.y, 45, 0, Math.PI * 2); ctx.stroke();
+  }
+
+  // HP bar
+  const pBW = 34;
+  const pHpPct = p.hp / pMaxHp;
+  ctx.fillStyle = "rgba(0, 0, 0, 0.7)";
+  ctx.fillRect(p.x - pBW / 2, p.y - 23, pBW, 5);
+  ctx.fillStyle = "#10b981";
+  ctx.fillRect(p.x - pBW / 2, p.y - 23, pBW * pHpPct, 5);
+
+  // Sparks
+  ctx.shadowBlur = 0;
+  canvasParticles.forEach((spk) => {
+    ctx.fillStyle = spk.color;
+    ctx.fillRect(spk.x, spk.y, 3, 3);
+  });
+
+  // Canvas details overlay
+  ctx.fillStyle = "#ffffff";
+  ctx.font = "bold 13px 'Plus Jakarta Sans', sans-serif";
+  const coreLvl = state.villageDefense.level;
+  const coreMaxHp = 100 + (coreLvl - 1) * 30;
+  ctx.fillText(`Core HP: ${state.villageRaid.coreHp} / ${coreMaxHp}`, 16, 26);
+  ctx.fillText(`Wave: ${state.villageRaid.wave + 1}`, 16, 44);
+
+  if (!state.villageRaid.active) {
+    ctx.fillStyle = "rgba(10, 15, 29, 0.75)";
+    ctx.fillRect(0, 0, w, h);
+    ctx.fillStyle = "#a7f3d0";
+    ctx.font = "bold 18px 'Outfit', sans-serif";
+    ctx.textAlign = "center";
+    ctx.fillText("Village is Peaceful", w / 2, h / 2 - 15);
+    ctx.fillStyle = "#94a3b8";
+    ctx.font = "14px 'Plus Jakarta Sans', sans-serif";
+    ctx.fillText("Train warriors and prepare defenses below.", w / 2, h / 2 + 10);
+    ctx.fillText(`Next wave in ${formatDuration(state.villageRaid.timer)}`, w / 2, h / 2 + 35);
+    ctx.textAlign = "left";
+  }
+}
+
+// Notification Alert bar updates
+function updateNotificationBar() {
+  const bar = document.getElementById("notificationBar");
+  if (!bar) return;
+  const icon = document.getElementById("notificationIcon");
+  const msg = document.getElementById("notificationMessage");
+  const btn = document.getElementById("notificationTabButton");
+
+  if (!state) return;
+
+  if (state.villageRaid.active) {
+    bar.className = "notification-bar red";
+    icon.textContent = "✦";
+    msg.textContent = `ALERT: Your village is being raided! Wave ${state.villageRaid.wave + 1}!`;
+    btn.classList.remove("hidden");
+    btn.textContent = "Defend Village!";
+  } else {
+    bar.className = "notification-bar green";
+    icon.textContent = "✦";
+    msg.textContent = `Village peaceful. Next defense wave in ${formatDuration(state.villageRaid.timer)}.`;
+    btn.classList.add("hidden");
+  }
+}
+
+// --- ROGUELIKE DUNGEON CRAWLER MINI-GAME ---
+
+function generateDungeonGrid() {
+  const grid = [];
+  for (let r = 0; r < 5; r++) {
+    const row = [];
+    for (let c = 0; c < 5; c++) {
+      row.push({
+        r, c,
+        type: "empty",
+        revealed: false,
+        defeated: false,
+        chestOpened: false
+      });
+    }
+    grid.push(row);
+  }
+
+  grid[0][0].type = "start";
+  grid[0][0].revealed = true;
+  grid[4][4].type = "boss";
+  grid[4][3].type = "exit";
+
+  const list = [];
+  for (let r = 0; r < 5; r++) {
+    for (let c = 0; c < 5; c++) {
+      if ((r === 0 && c === 0) || (r === 4 && c === 4) || (r === 4 && c === 3)) continue;
+      list.push({ r, c });
+    }
+  }
+
+  list.sort(() => Math.random() - 0.5);
+
+  // Place 6 monsters, 4 chests, 2 shrines
+  for (let i = 0; i < list.length; i++) {
+    const coord = list[i];
+    if (i < 6) {
+      grid[coord.r][coord.c].type = "monster";
+    } else if (i < 10) {
+      grid[coord.r][coord.c].type = "chest";
+    } else if (i < 12) {
+      grid[coord.r][coord.c].type = "shrine";
+    }
+  }
+
+  state.dungeon.grid = grid;
+  state.dungeon.playerPos = { r: 0, c: 0 };
+  state.dungeon.cleared = false;
+  state.dungeon.goldFound = 0;
+  state.dungeon.emeraldsFound = 0;
+}
+
+function checkTileAdjacent(r, c) {
+  const p = state.dungeon.playerPos;
+  const dr = Math.abs(p.r - r);
+  const dc = Math.abs(p.c - c);
+  return (dr + dc === 1);
+}
+
+function clickDungeonTile(r, c) {
+  if (!state.dungeon.grid || state.dungeon.cleared) return;
+  if (!checkTileAdjacent(r, c)) return;
+
+  const tile = state.dungeon.grid[r][c];
+  tile.revealed = true;
+  state.dungeon.playerPos = { r, c };
+
+  const floor = state.dungeon.floor;
+  
+  if (tile.type === "monster" && !tile.defeated) {
+    const dmg = Math.max(5, Math.ceil((12 + floor * 4) - (armorTiers[state.villageDefense.armorLevel].hp / 45)));
+    state.dungeon.hp = Math.max(0, state.dungeon.hp - dmg);
+    addLog(`Encountered a Dungeon spider monster! Lost ${dmg} HP.`);
+
+    if (state.dungeon.hp <= 0) {
+      addLog(`Explorer was knocked unconscious! Fled back to camp.`);
+      fleeDungeon();
+      return;
+    }
+
+    tile.defeated = true;
+    const goldReward = randomInt(15 + floor * 5, 30 + floor * 8);
+    const emeraldReward = randomInt(1 + floor, 3 + floor);
+    state.resources.gold += goldReward;
+    state.resources.emerald += emeraldReward;
+    state.dungeon.goldFound += goldReward;
+    state.dungeon.emeraldsFound += emeraldReward;
+    addLog(`Defeated monster! Earned +${goldReward} Gold, +${emeraldReward} Emeralds.`);
+  } 
+  else if (tile.type === "chest" && !tile.chestOpened) {
+    tile.chestOpened = true;
+    const goldReward = randomInt(30 + floor * 8, 60 + floor * 12);
+    const emeraldReward = randomInt(2 + floor, 5 + floor);
+    state.resources.gold += goldReward;
+    state.resources.emerald += emeraldReward;
+    state.dungeon.goldFound += goldReward;
+    state.dungeon.emeraldsFound += emeraldReward;
+    addLog(`Opened ancient chest! Found +${goldReward} Gold, +${emeraldReward} Emeralds!`);
+  } 
+  else if (tile.type === "shrine" && !tile.defeated) {
+    tile.defeated = true;
+    const heal = Math.ceil(state.dungeon.maxHp * 0.5);
+    state.dungeon.hp = Math.min(state.dungeon.maxHp, state.dungeon.hp + heal);
+    addLog(`Visited healing shrine! Restored +${heal} HP.`);
+  } 
+  else if (tile.type === "boss" && !tile.defeated) {
+    const bossDmg = Math.max(10, Math.ceil((25 + floor * 8) - (armorTiers[state.villageDefense.armorLevel].hp / 35)));
+    state.dungeon.hp = Math.max(0, state.dungeon.hp - bossDmg);
+    addLog(`Encountered the Dungeon Guardian Boss! Took ${bossDmg} damage!`);
+
+    if (state.dungeon.hp <= 0) {
+      addLog(`Explorer defeated by Dungeon Guardian! Fled back to camp.`);
+      fleeDungeon();
+      return;
+    }
+
+    tile.defeated = true;
+    state.dungeon.cleared = true;
+    const goldReward = randomInt(80 + floor * 20, 160 + floor * 35);
+    const emeraldReward = randomInt(8 + floor * 2, 16 + floor * 4);
+    state.resources.gold += goldReward;
+    state.resources.emerald += emeraldReward;
+    state.dungeon.goldFound += goldReward;
+    state.dungeon.emeraldsFound += emeraldReward;
+    addLog(`EPIC VICTORY! Defeated the Dungeon Boss! Floor cleared successfully! Gained +${goldReward} Gold, +${emeraldReward} Emeralds.`);
+  } 
+  else if (tile.type === "exit") {
+    addLog(`Dungeon Exit reached! Enter next floor to advance deeper.`);
+  }
+
+  renderAll();
+}
+
+function enterDungeonFloor() {
+  const selected = getSelectedExplorer();
+  if (!selected || selected.mission) {
+    addLog("Choose an adventurer raider first.");
+    return;
+  }
+
+  const lvl = getExplorerLevel(selected);
+  const hpBonus = armorTiers[state.villageDefense.armorLevel].hp - 100;
+  const powerBonus = swordTiers[state.villageDefense.swordLevel].power - 12;
+
+  state.dungeon.explorerId = selected.id;
+  state.dungeon.maxHp = 100 + lvl * 15 + hpBonus;
+  state.dungeon.hp = state.dungeon.maxHp;
+  state.dungeon.power = 10 + lvl * 5 + powerBonus;
+
+  if (state.dungeon.cleared) {
+    state.dungeon.floor += 1;
+  }
+  generateDungeonGrid();
+  addLog(`${selected.name} enters Dungeon Floor ${state.dungeon.floor}!`);
+  renderAll();
+}
+
+function fleeDungeon() {
+  addLog(`Explorer flees and returns safely to settlement camp.`);
+  state.dungeon.explorerId = null;
+  state.dungeon.grid = null;
+  state.dungeon.hp = 0;
+  renderAll();
+}
+
+function renderDungeonGridUI() {
+  const gridContainer = document.getElementById("dungeonGrid");
+  const dungExplorerName = document.getElementById("dungExplorerName");
+  const dungFloor = document.getElementById("dungFloor");
+  const dungHp = document.getElementById("dungHp");
+  const dungGold = document.getElementById("dungGold");
+  const dungEmeralds = document.getElementById("dungEmeralds");
+  const btnEnter = document.getElementById("btnEnterDungeon");
+  const btnFlee = document.getElementById("btnFleeDungeon");
+
+  if (!gridContainer || !dungExplorerName) return;
+
+  if (!state.dungeon.explorerId || !state.dungeon.grid) {
+    gridContainer.innerHTML = `<div class="empty-note" style="grid-column: span 5; grid-row: span 5; margin: auto;">Expedition Inactive. Select an Explorer raider below and enter.</div>`;
+    dungExplorerName.textContent = "None";
+    dungFloor.textContent = state.dungeon.floor;
+    dungHp.textContent = "0 / 0";
+    dungGold.textContent = 0;
+    dungEmeralds.textContent = 0;
+    btnEnter.disabled = false;
+    btnEnter.textContent = "Enter Dungeon";
+    btnFlee.disabled = true;
+    renderDungeonExplorerRoster();
+    return;
+  }
+
+  const selected = getExplorerById(state.dungeon.explorerId);
+  dungExplorerName.textContent = escapeHtml(selected.name);
+  dungFloor.textContent = state.dungeon.floor;
+  dungHp.textContent = `${state.dungeon.hp} / ${state.dungeon.maxHp}`;
+  dungGold.textContent = state.dungeon.goldFound;
+  dungEmeralds.textContent = state.dungeon.emeraldsFound;
+
+  btnEnter.disabled = !state.dungeon.cleared;
+  btnEnter.textContent = state.dungeon.cleared ? "Next Dungeon Floor" : "In Dungeon Expedition";
+  btnFlee.disabled = false;
+
+  const p = state.dungeon.playerPos;
+  gridContainer.innerHTML = state.dungeon.grid
+    .flatMap((row) =>
+      row.map((tile) => {
+        const isPlayer = p.r === tile.r && p.c === tile.c;
+        const isAdj = checkTileAdjacent(tile.r, tile.c);
+        const tileClasses = ["dung-tile"];
+
+        if (isPlayer) tileClasses.push("player");
+        if (tile.revealed) {
+          tileClasses.push("revealed");
+          if (tile.type === "boss") tileClasses.push("boss");
+          if (tile.type === "exit") tileClasses.push("exit");
+        } else {
+          tileClasses.push("fog");
+        }
+
+        if (isAdj && !state.dungeon.cleared) tileClasses.push("adjacent");
+
+        let content = "";
+        if (tile.revealed) {
+          if (tile.type === "boss") content = tile.defeated ? "☠️" : "👑";
+          else if (tile.type === "chest") content = tile.chestOpened ? "🔓" : "🎁";
+          else if (tile.type === "monster") content = tile.defeated ? "☠️" : "👾";
+          else if (tile.type === "shrine") content = tile.defeated ? "🪨" : "🌟";
+          else if (tile.type === "exit") content = "🚪";
+        } else {
+          content = "❓";
+        }
+
+        return `<div class="${tileClasses.join(" ")}" data-r="${tile.r}" data-c="${tile.c}">${content}</div>`;
+      })
+    )
+    .join("");
+
+  Array.from(document.querySelectorAll(".dung-tile.adjacent")).forEach((tile) => {
+    tile.addEventListener("click", () => {
+      clickDungeonTile(Number(tile.dataset.r), Number(tile.dataset.c));
+    });
+  });
+
+  renderDungeonExplorerRoster();
+}
+
+function renderDungeonExplorerRoster() {
+  const listWrap = document.getElementById("dungeonExplorerRoster");
+  if (!listWrap) return;
+  if (state.dungeon.explorerId) {
+    listWrap.innerHTML = `<div class="empty-note">Adventurer selection is locked during dungeon expedition.</div>`;
+    return;
+  }
+
+  const selected = getSelectedExplorer();
+  listWrap.innerHTML = state.explorers.roster
+    .map(
+      (explorer) => `
+        <article class="roster-card ${explorer.id === selected.id ? "active" : ""}" data-dung-roster-id="${explorer.id}" style="margin-bottom: 8px;">
+          <div class="card-top">
+            <div>
+              <h3>${escapeHtml(explorer.name)}</h3>
+              <p class="soft-text">${explorer.type === "village_scout" ? "Village Scout" : archetypes[explorer.archetype].label}</p>
+            </div>
+            <span class="meta-pill">Lv ${getExplorerLevel(explorer)}</span>
+          </div>
+          <div class="job-row">
+            <span class="status-pill">${explorer.mission ? "Busy" : "Ready"}</span>
+            <span class="status-pill">${explorer.type === "village_scout" ? "Scout" : `Power ${getExplorerPower(explorer)}`}</span>
+          </div>
+        </article>
+      `
+    )
+    .join("");
+
+  Array.from(document.querySelectorAll("[data-dung-roster-id]")).forEach((card) => {
+    card.addEventListener("click", () => {
+      state.explorers.selectedId = card.dataset.dungRosterId;
+      renderAll();
+    });
+  });
+}
+
+function setupVillageAndDungeonListeners() {
+  const upgradeSwordBtn = document.getElementById("btnUpgradeSword");
+  if (upgradeSwordBtn) upgradeSwordBtn.addEventListener("click", upgradeSword);
+  
+  const upgradeArmorBtn = document.getElementById("btnUpgradeArmor");
+  if (upgradeArmorBtn) upgradeArmorBtn.addEventListener("click", upgradeArmor);
+  
+  const buyTurretBtn = document.getElementById("btnBuyTurret");
+  if (buyTurretBtn) buyTurretBtn.addEventListener("click", buyTurret);
+  
+  const upgradeBaseDefenseBtn = document.getElementById("btnUpgradeBaseDefense");
+  if (upgradeBaseDefenseBtn) upgradeBaseDefenseBtn.addEventListener("click", upgradeBaseDefense);
+
+  const enterDungeonBtn = document.getElementById("btnEnterDungeon");
+  if (enterDungeonBtn) enterDungeonBtn.addEventListener("click", enterDungeonFloor);
+  
+  const fleeDungeonBtn = document.getElementById("btnFleeDungeon");
+  if (fleeDungeonBtn) fleeDungeonBtn.addEventListener("click", fleeDungeon);
+
+  const notifTabBtn = document.getElementById("notificationTabButton");
+  if (notifTabBtn) notifTabBtn.addEventListener("click", () => {
+    setActiveTab("village");
+  });
+
+  const debugTriggerRaidBtn = document.getElementById("debugTriggerRaid");
+  if (debugTriggerRaidBtn) debugTriggerRaidBtn.addEventListener("click", () => {
+    if (!state.villageRaid.active) {
+      state.villageRaid.timer = 0; // Trigger instantly
+    }
+  });
+
+  setupRaidControls();
+}
+
+// --- END OF CUSTOM GALAXY SYSTEM ---
 
 document.addEventListener("visibilitychange", () => {
   if (document.visibilityState === "visible" && state) {
@@ -2088,10 +3139,29 @@ window.setInterval(() => {
   applyProduction(seconds);
   processWorldEvents();
 
+  // Active village raid clock timer ticking
+  if (!state.villageRaid.active) {
+    state.villageRaid.timer = Math.max(0, state.villageRaid.timer - seconds);
+    if (state.villageRaid.timer <= 0) {
+      state.villageRaid.active = true;
+      state.villageRaid.timer = 600; // 10 minutes interval
+      state.villageRaid.monsters = [];
+      state.villageRaid.monstersDefeated = 0;
+      state.villageRaid.projectiles = [];
+      state.villageRaid.coreHp = 100 + (state.villageDefense.level - 1) * 30;
+      state.villageRaid.player.hp = armorTiers[state.villageDefense.armorLevel].hp;
+      state.villageRaid.player.x = 300;
+      state.villageRaid.player.y = 200;
+      addLog("ALERT: Your village is being raided! Open the Village tab to fight monsters!");
+    }
+  }
+
   if (Date.now() - lastAutoSave >= 5000) {
     saveGame();
     lastAutoSave = Date.now();
   }
+
+  updateNotificationBar();
 
   if (Date.now() - lastFullRender >= 1000) {
     renderAll();
@@ -2104,6 +3174,7 @@ window.setInterval(() => {
 
 (function init() {
   initAuthListeners();
+  setupVillageAndDungeonListeners();
   if (currentUser) {
     loadGameForUser(currentUser);
   } else {

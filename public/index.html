@@ -4,6 +4,9 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Bronze Banner</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="./styles.css" />
     <script src="./game.js" defer></script>
     <link rel="manifest" href="./manifest.json" />
@@ -62,6 +65,11 @@
     </div>
 
     <div id="appView" class="shell hidden">
+      <div id="notificationBar" class="notification-bar green">
+        <span id="notificationIcon" class="notification-icon">✦</span>
+        <span id="notificationMessage" class="notification-text font-bold">Village is peaceful. Next wave in 10:00</span>
+        <button id="notificationTabButton" class="notification-action hidden" type="button">Protect Village</button>
+      </div>
       <header class="masthead">
         <div class="masthead-copy">
           <p class="kicker">Settlement sandbox clicker</p>
@@ -137,6 +145,12 @@
         </button>
         <button class="tab-button" data-tab="explore" type="button">
           Explore
+        </button>
+        <button class="tab-button" data-tab="village" type="button">
+          Village
+        </button>
+        <button class="tab-button" data-tab="dungeon" type="button">
+          Dungeon
         </button>
       </nav>
 
@@ -299,8 +313,12 @@
                   <p class="label">Expeditions</p>
                   <h2>Choose A Journey</h2>
                 </div>
+                <p class="soft-text" style="margin-top: 5px;">Embark on dangerous explorations to find treasure and power.</p>
               </div>
-              <div id="expeditionList" class="card-grid"></div>
+              <div style="margin-top: 15px;">
+                <button id="btnOpenExpeditionsModal" class="action-button alt" style="width: 100%; display: block;" type="button">✦ Embark on Expedition ✦</button>
+                <div id="expeditionStatusInline" class="empty-note" style="margin-top: 10px; text-align: center;">Ready for journey</div>
+              </div>
             </article>
 
             <article class="panel">
@@ -314,7 +332,141 @@
             </article>
           </div>
         </section>
-      </main>
+
+        <!-- Village Combat & Shop Panel -->
+        <section class="tab-panel" data-panel="village">
+          <div class="two-column">
+            <!-- Village Combat Canvas Panel -->
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Action Zone</p>
+                  <h2>Village Core Defense</h2>
+                </div>
+                <p class="soft-text">Use <strong>W, A, S, D</strong> to move your defender. Click or press <strong>Space</strong> to swing your weapon. Protect the golden center core!</p>
+              </div>
+              <div class="canvas-wrap">
+                <canvas id="villageCanvas" width="600" height="400"></canvas>
+                <!-- Mobile D-Pad overlays -->
+                <div class="mobile-controls">
+                  <button id="dpadUp" class="dpad-btn" type="button">▲</button>
+                  <div class="dpad-row">
+                    <button id="dpadLeft" class="dpad-btn" type="button">◀</button>
+                    <button id="dpadSwing" class="dpad-btn swing" type="button">SWING</button>
+                    <button id="dpadRight" class="dpad-btn" type="button">▶</button>
+                  </div>
+                  <button id="dpadDown" class="dpad-btn" type="button">▼</button>
+                </div>
+              </div>
+              <div class="job-row" style="margin-top: 12px; justify-content: center; gap: 15px;">
+                <button id="debugTriggerRaid" class="action-button alt" type="button">Debug: Trigger Raid Wave</button>
+              </div>
+            </article>
+
+            <!-- Armory & Shop Panel -->
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Armory & Upgrades</p>
+                  <h2>Base Defenses</h2>
+                </div>
+              </div>
+              
+              <div class="defense-upgrade-grid">
+                <!-- Armory Weapon Upgrade -->
+                <div class="upgrade-sub-card">
+                  <h3>Cosmic Sword Upgrade</h3>
+                  <p id="swordUpgradeDesc" class="soft-text">Wooden Stick (Default)</p>
+                  <div id="swordUpgradeCost" class="cost-row"></div>
+                  <button id="btnUpgradeSword" class="action-button" type="button" style="margin-top: 10px;">Buy Gear</button>
+                </div>
+
+                <!-- Armory Armor Upgrade -->
+                <div class="upgrade-sub-card">
+                  <h3>Celestial Armor Upgrade</h3>
+                  <p id="armorUpgradeDesc" class="soft-text">Tattered Clothes (Default)</p>
+                  <div id="armorUpgradeCost" class="cost-row"></div>
+                  <button id="btnUpgradeArmor" class="action-button" type="button" style="margin-top: 10px;">Buy Gear</button>
+                </div>
+
+                <!-- Turrets Shop -->
+                <div class="upgrade-sub-card">
+                  <h3>Active Defense Turrets</h3>
+                  <p class="soft-text">Turrets fire auto-lasers at enemies during raids, running out after a wave completes.</p>
+                  <p id="turretCountDesc" class="soft-text font-bold" style="margin: 8px 0; color: var(--accent-alt);">Turrets deployed: 0 / 4</p>
+                  <div id="turretCostWrap" class="cost-row"></div>
+                  <button id="btnBuyTurret" class="action-button" type="button" style="margin-top: 10px;">Deploy Turret</button>
+                </div>
+
+                <!-- Permanent Base upgrades -->
+                <div class="upgrade-sub-card">
+                  <h3>Permanent Base Level</h3>
+                  <p id="baseLevelDesc" class="soft-text">Defense Level: 1 (+0% Turret Speed, +0 core Max HP)</p>
+                  <div id="baseLevelCost" class="cost-row"></div>
+                  <button id="btnUpgradeBaseDefense" class="action-button alt" type="button" style="margin-top: 10px;">Level Up Base</button>
+                </div>
+              </div>
+            </article>
+          </div>
+        </section>
+
+        <!-- Dungeon Tab Panel -->
+        <section class="tab-panel" data-panel="dungeon">
+          <div class="two-column">
+            <!-- Roguelike Grid Crawler -->
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Adventure crawler</p>
+                  <h2>Dungeon Crawler</h2>
+                </div>
+                <p class="soft-text">Select an explorer from the roster, then explore the connected room tiles to find gold, emeralds, and defeat the Boss!</p>
+              </div>
+              <div class="dungeon-dashboard">
+                <div class="dungeon-stats-bar">
+                  <div class="dstat">Explorer: <strong id="dungExplorerName" style="color: var(--accent-blue);">None</strong></div>
+                  <div class="dstat">Floor: <strong id="dungFloor" style="color: var(--accent-alt);">1</strong></div>
+                  <div class="dstat">HP: <strong id="dungHp" style="color: #10b981;">0 / 0</strong></div>
+                  <div class="dstat">Gold: <strong id="dungGold" style="color: #f59e0b;">0</strong></div>
+                  <div class="dstat">Emeralds: <strong id="dungEmeralds" style="color: #10b981;">0</strong></div>
+                </div>
+                <div id="dungeonGrid" class="dungeon-grid-container"></div>
+                <div class="dungeon-actions" style="margin-top: 15px; display: flex; gap: 10px; justify-content: center;">
+                  <button id="btnEnterDungeon" class="action-button" type="button">Enter Dungeon Floor</button>
+                  <button id="btnFleeDungeon" class="action-button alt" type="button" disabled>Flee Dungeon</button>
+                </div>
+              </div>
+            </article>
+
+            <!-- Explorer Roster for Dungeons -->
+            <article class="panel">
+              <div class="panel-head">
+                <div>
+                  <p class="label">Roster select</p>
+                  <h2>Choose Your Raider</h2>
+                </div>
+              </div>
+              <div id="dungeonExplorerRoster" class="roster-list"></div>
+            </article>
+          </div>
+        </section>
+    </div>
+
+    <!-- Expedition Selection Pop-up Modal -->
+    <div id="expeditionModal" class="modal-overlay hidden">
+      <div class="modal-content panel">
+        <!-- Glowing galaxy corners -->
+        <span class="star-corner star-tl">✦</span>
+        <span class="star-corner star-br">✦</span>
+        
+        <div class="modal-header">
+          <h2>Select Expedition Journey</h2>
+          <button id="btnCloseExpeditionModal" class="close-btn" type="button">✕</button>
+        </div>
+        <p class="soft-text" style="margin-bottom: 15px;">Send your selected explorer on a journey. Required level and provisions must be satisfied.</p>
+        
+        <div id="expeditionModalList" class="modal-card-grid"></div>
+      </div>
     </div>
   </body>
 </html>
