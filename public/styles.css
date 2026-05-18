@@ -892,3 +892,41 @@ select {
 .auth-grid {
   display: none !important;
 }
+
+/* Floating Click Indicators */
+.floating-click-text {
+  position: fixed;
+  pointer-events: none;
+  font-family: "Trebuchet MS", "Gill Sans", sans-serif;
+  font-size: 1.25rem;
+  font-weight: 800;
+  text-shadow: 
+    -1px -1px 0 #120b07,  
+     1px -1px 0 #120b07,
+    -1px  1px 0 #120b07,
+     1px  1px 0 #120b07,
+     0px  3px 6px rgba(0, 0, 0, 0.5);
+  z-index: 9999;
+  animation: floatUpAndFade 0.8s cubic-bezier(0.18, 0.89, 0.32, 1.28) forwards;
+}
+
+.floating-click-text.influence { color: #f2bc63; }
+.floating-click-text.wood { color: #7fbb70; }
+.floating-click-text.stone { color: #b0b2ab; }
+.floating-click-text.metal { color: #f19667; }
+.floating-click-text.knowledge { color: #958fe1; }
+
+@keyframes floatUpAndFade {
+  0% {
+    transform: translate(-50%, -50%) scale(0.6);
+    opacity: 0;
+  }
+  15% {
+    transform: translate(-50%, -100%) scale(1.1);
+    opacity: 1;
+  }
+  100% {
+    transform: translate(-50%, -240%) scale(1);
+    opacity: 0;
+  }
+}

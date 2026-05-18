@@ -733,7 +733,7 @@ function renderClickers() {
     .join("");
 
   Array.from(document.querySelectorAll("[data-click]")).forEach((button) => {
-    button.addEventListener("click", () => performClick(button.dataset.click));
+    button.addEventListener("click", (event) => performClick(button.dataset.click, event));
   });
 }
 
@@ -1556,12 +1556,32 @@ function renderAll() {
   lastFullRender = Date.now();
 }
 
-function performClick(resourceKey) {
+function createFloatingText(x, y, text, resourceKey) {
+  const el = document.createElement("span");
+  el.className = `floating-click-text ${resourceKey}`;
+  el.textContent = text;
+  el.style.left = `${x}px`;
+  el.style.top = `${y}px`;
+  document.body.appendChild(el);
+  setTimeout(() => el.remove(), 800);
+}
+
+function performClick(resourceKey, event) {
   if (!isClickerUnlocked(resourceKey)) return;
-  state.resources[resourceKey] += getClickYield(resourceKey);
+  const yieldAmount = getClickYield(resourceKey);
+  state.resources[resourceKey] += yieldAmount;
   state.totalClicks += state.clicker.burstLevel;
 
   renderAll();
+
+  if (event && event.clientX && event.clientY) {
+    createFloatingText(
+      event.clientX,
+      event.clientY,
+      `${formatNumber(state.resources[resourceKey])} ${capitalize(resourceKey)}`,
+      resourceKey
+    );
+  }
 }
 
 function buyClickUpgradeBurst() {
