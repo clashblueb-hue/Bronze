@@ -1169,6 +1169,26 @@ function renderSettlementGrid() {
 
 function renderExplorer() {
   const selected = getSelectedExplorer();
+
+  // Check if any explorer input fields are currently focused
+  const nameInput = document.getElementById("explorerNameInput");
+  const archetypeSelect = document.getElementById("explorerArchetypeSelect");
+  const cloakSelect = document.getElementById("explorerCloakSelect");
+  const accentSelect = document.getElementById("explorerAccentSelect");
+
+  const isInputFocused = (
+    document.activeElement === nameInput ||
+    document.activeElement === archetypeSelect ||
+    document.activeElement === cloakSelect ||
+    document.activeElement === accentSelect
+  );
+
+  if (isInputFocused) {
+    // Skip full layout recreation to preserve cursor and dropdown state,
+    // but dynamically update the elements that don't steal focus if needed.
+    return;
+  }
+
   const progress = getExplorerProgress(selected);
   const recruitCost = getRecruitExplorerCost();
   const scoutCost = getRecruitVillageScoutCost();
@@ -1181,7 +1201,7 @@ function renderExplorer() {
             <article class="roster-card ${explorer.id === selected.id ? "active" : ""}" data-select-explorer="${explorer.id}">
               <div class="card-top">
                 <div>
-                  <h3>${escapeHtml(explorer.name)}</h3>
+                  <h3 class="roster-name-${explorer.id}">${escapeHtml(explorer.name)}</h3>
                   <p class="soft-text">${explorer.type === "village_scout" ? "Village Scout" : archetypes[explorer.archetype].label}</p>
                 </div>
                 <span class="meta-pill">Lv ${getExplorerLevel(explorer)}</span>
@@ -1270,15 +1290,19 @@ function renderExplorer() {
   Array.from(document.querySelectorAll("[data-select-explorer]")).forEach((card) => {
     card.addEventListener("click", () => {
       state.explorers.selectedId = card.dataset.selectExplorer;
-
       renderAll();
     });
   });
 
   document.getElementById("explorerNameInput").addEventListener("input", (event) => {
     selected.name = event.target.value.slice(0, 18) || "ari";
-
-    renderExplorer();
+    
+    // Dynamically update name in roster card to see changes live
+    const rosterCardName = document.querySelector(`.roster-name-${selected.id}`);
+    if (rosterCardName) {
+      rosterCardName.textContent = selected.name;
+    }
+    
     renderExpeditions();
     renderFrontier();
   });
@@ -1287,20 +1311,20 @@ function renderExplorer() {
   if (archetypeSelect) {
     archetypeSelect.addEventListener("change", (event) => {
       selected.archetype = event.target.value;
-
+      event.target.blur(); // Release focus to allow recreation
       renderAll();
     });
   }
 
   document.getElementById("explorerCloakSelect").addEventListener("change", (event) => {
     selected.cloak = event.target.value;
-
+    event.target.blur(); // Release focus to allow recreation
     renderExplorer();
   });
 
   document.getElementById("explorerAccentSelect").addEventListener("change", (event) => {
     selected.accent = event.target.value;
-
+    event.target.blur(); // Release focus to allow recreation
     renderExplorer();
   });
 
