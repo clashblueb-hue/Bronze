@@ -848,7 +848,7 @@ function renderSummary() {
     .slice(0, 3);
   const mainExplorer = state.explorers.roster[0];
 
-  UI.playerName.textContent = "Player";
+  UI.playerName.textContent = currentUser ? capitalize(currentUser) : "Guest";
   UI.ageName.textContent = ages[state.age].name;
   UI.villagerSummary.textContent = `${state.workers.total} / ${getWorkerCapacity()}`;
   UI.explorerLevelSummary.textContent = `${getExplorerLevel(mainExplorer)}`;
@@ -1478,9 +1478,9 @@ function renderExplorer() {
     renderFrontier();
   });
 
-  const archetypeSelect = document.getElementById("explorerArchetypeSelect");
-  if (archetypeSelect) {
-    archetypeSelect.addEventListener("change", (event) => {
+  const activeArchetypeSelect = document.getElementById("explorerArchetypeSelect");
+  if (activeArchetypeSelect) {
+    activeArchetypeSelect.addEventListener("change", (event) => {
       selected.archetype = event.target.value;
       event.target.blur(); // Release focus to allow recreation
       renderAll();
