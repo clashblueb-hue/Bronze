@@ -105,10 +105,6 @@ const UI = {
   craftingList: document.getElementById("craftingList"),
   expeditionList: document.getElementById("expeditionList"),
   frontierCard: document.getElementById("frontierCard"),
-  logoutButton: document.getElementById("logoutButton"),
-  exportSaveButton: document.getElementById("exportSaveButton"),
-  importSaveButton: document.getElementById("importSaveButton"),
-  importSaveInput: document.getElementById("importSaveInput"),
   tabButtons: Array.from(document.querySelectorAll(".tab-button")),
   tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
 };
@@ -291,62 +287,6 @@ function normalizeState(raw) {
 }
 
 
-
-function encryptSave(dataObj) {
-  const jsonStr = encodeURIComponent(JSON.stringify(dataObj));
-  let result = "";
-  for(let i = 0; i < jsonStr.length; i++) {
-    result += String.fromCharCode(jsonStr.charCodeAt(i) ^ 42);
-  }
-  return btoa(result);
-}
-
-function decryptSave(encodedStr) {
-  const decoded = atob(encodedStr);
-  let result = "";
-  for(let i = 0; i < decoded.length; i++) {
-    result += String.fromCharCode(decoded.charCodeAt(i) ^ 42);
-  }
-  return JSON.parse(decodeURIComponent(result));
-}
-
-UI.exportSaveButton.addEventListener("click", () => {
-  if (!state) return;
-  const encrypted = encryptSave(state);
-  const blob = new Blob([encrypted], { type: "text/plain" });
-  const url = URL.createObjectURL(blob);
-  const a = document.createElement("a");
-  a.href = url;
-  a.download = "bronze-banner.save";
-  a.click();
-  URL.revokeObjectURL(url);
-  addLog("Save state exported securely.");
-});
-
-UI.importSaveButton.addEventListener("click", () => {
-  UI.importSaveInput.click();
-});
-
-UI.importSaveInput.addEventListener("change", (event) => {
-  const file = event.target.files[0];
-  if (!file) return;
-
-  const reader = new FileReader();
-  reader.onload = (e) => {
-    try {
-      const rawText = e.target.result;
-      const parsed = decryptSave(rawText);
-      state = normalizeState(parsed);
-      applyOfflineProgress();
-      addLog("Save state imported successfully.");
-      renderAll();
-    } catch (err) {
-      addLog("Failed to import save. The file might be corrupted or invalid.");
-    }
-    UI.importSaveInput.value = "";
-  };
-  reader.readAsText(file);
-});
 
 function getBuildingDefinition(id) {
   return buildingDefs.find((building) => building.id === id) || null;
@@ -861,7 +801,7 @@ function renderClickerWorkshop() {
   Array.from(document.querySelectorAll("[data-theme]")).forEach((button) => {
     button.addEventListener("click", () => {
       state.clicker.theme = button.dataset.theme;
-      markDirty();
+
       renderAll();
     });
   });
@@ -1171,7 +1111,7 @@ function renderMapExpansion() {
   if (cancelPlacement) {
     cancelPlacement.addEventListener("click", () => {
       state.pendingBuild = null;
-      markDirty();
+
       renderAll();
     });
   }
@@ -1330,14 +1270,14 @@ function renderExplorer() {
   Array.from(document.querySelectorAll("[data-select-explorer]")).forEach((card) => {
     card.addEventListener("click", () => {
       state.explorers.selectedId = card.dataset.selectExplorer;
-      markDirty();
+
       renderAll();
     });
   });
 
   document.getElementById("explorerNameInput").addEventListener("input", (event) => {
     selected.name = event.target.value.slice(0, 18) || "ari";
-    markDirty();
+
     renderExplorer();
     renderExpeditions();
     renderFrontier();
@@ -1347,20 +1287,20 @@ function renderExplorer() {
   if (archetypeSelect) {
     archetypeSelect.addEventListener("change", (event) => {
       selected.archetype = event.target.value;
-      markDirty();
+
       renderAll();
     });
   }
 
   document.getElementById("explorerCloakSelect").addEventListener("change", (event) => {
     selected.cloak = event.target.value;
-    markDirty();
+
     renderExplorer();
   });
 
   document.getElementById("explorerAccentSelect").addEventListener("change", (event) => {
     selected.accent = event.target.value;
-    markDirty();
+
     renderExplorer();
   });
 
@@ -1620,7 +1560,7 @@ function performClick(resourceKey) {
   if (!isClickerUnlocked(resourceKey)) return;
   state.resources[resourceKey] += getClickYield(resourceKey);
   state.totalClicks += state.clicker.burstLevel;
-  markDirty();
+
   renderAll();
 }
 
@@ -1631,7 +1571,7 @@ function buyClickUpgradeBurst() {
   spendResources(cost);
   state.clicker.burstLevel += 1;
   addLog(`Click hands increased to ${state.clicker.burstLevel}.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1642,7 +1582,7 @@ function buyClickUpgradePower() {
   spendResources(cost);
   state.clicker.powerLevel += 1;
   addLog(`Click strength increased to x${formatNumber(getClickPowerMultiplier())}.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1652,7 +1592,7 @@ function hireVillager() {
   spendResources(cost);
   state.workers.total += 1;
   addLog("A new villager joins the settlement.");
-  markDirty();
+
   renderAll();
 }
 
@@ -1668,7 +1608,7 @@ function adjustAssignment(jobKey, change) {
   }
 
   state.workers.assignments[jobKey] = next;
-  markDirty();
+
   renderAll();
 }
 
@@ -1687,7 +1627,7 @@ function hireWarrior() {
     addLog("Your first warrior has drawn attention. Future waves will now come every 10 to 20 minutes.");
   }
 
-  markDirty();
+
   renderAll();
 }
 
@@ -1696,7 +1636,7 @@ function requestBuild(buildingId) {
   if (!building || state.age < building.minAge || !canAfford(building.cost) || getOpenPlots() <= 0) return;
   state.pendingBuild = buildingId;
   state.activeTab = "civilisation";
-  markDirty();
+
   renderAll();
 }
 
@@ -1717,7 +1657,7 @@ function placePendingBuild(index) {
   if (building.id === "forge" && counts.forge === 1) addLog("Metal clicking is now unlocked.");
   if (building.id === "archive" && counts.archive === 1) addLog("Knowledge clicking is now unlocked.");
 
-  markDirty();
+
   renderAll();
 }
 
@@ -1727,7 +1667,7 @@ function advanceAge() {
   spendResources(nextAge.cost);
   state.age += 1;
   addLog(`Your settlement advances into the ${ages[state.age].name}.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1741,7 +1681,7 @@ function expandMap() {
   }
   state.mapExpansions += 1;
   addLog(`The map expands by ${EXPANSION_SIZE} new plots.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1753,7 +1693,7 @@ function recruitExplorer() {
   state.explorers.roster.push(explorer);
   state.explorers.selectedId = explorer.id;
   addLog(`${explorer.name} joins the expedition roster.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1768,7 +1708,7 @@ function recruitVillageScout() {
   state.explorers.roster.push(scout);
   state.explorers.selectedId = scout.id;
   addLog(`${scout.name} is hired as a village scout.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1782,7 +1722,7 @@ function craftItem(recipeId) {
   if (recipe.slot === "weapon") selected.equippedWeapon = recipeId;
   if (recipe.slot === "armor") selected.equippedArmor = recipeId;
   addLog(`${recipe.name} crafted for ${selected.name}.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1792,7 +1732,7 @@ function equipItem(recipeId) {
   if (!recipe || !selected.crafted[recipeId]) return;
   if (recipe.slot === "weapon") selected.equippedWeapon = recipeId;
   if (recipe.slot === "armor") selected.equippedArmor = recipeId;
-  markDirty();
+
   renderAll();
 }
 
@@ -1819,7 +1759,7 @@ function startExpedition(expeditionId) {
 
   addLog(`${selected.name} leaves for ${expedition.name}.`);
   if (duration === 0) addLog(`${selected.name} somehow returns instantly.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1843,7 +1783,7 @@ function startVillageScoutMission(explorerId, cost) {
 
   addLog(`${scout.name} sets out to search for a village.`);
   if (duration === 0) addLog(`${scout.name} somehow completes the search instantly.`);
-  markDirty();
+
   renderAll();
 }
 
@@ -1875,7 +1815,7 @@ function claimMission(explorerId) {
   }
 
   explorer.mission = null;
-  markDirty();
+
   renderAll();
 }
 
@@ -1895,14 +1835,14 @@ function tradeWithVillage(villageId) {
   village.support += 1;
   village.tradeCooldownUntil = Date.now() + 10 * 60 * 1000;
   addLog(`${village.name} sends supplies and more help to fight.`);
-  markDirty();
+
   renderAll();
 }
 
 function setActiveTab(tab) {
   if (!state) return;
   state.activeTab = tab;
-  markDirty();
+
   renderTabs();
 }
 
@@ -1918,7 +1858,7 @@ document.addEventListener("visibilitychange", () => {
     state.world.elapsedSeconds += seconds;
     applyProduction(seconds);
     processWorldEvents();
-    markDirty();
+
     renderAll();
   }
 });
@@ -1932,7 +1872,7 @@ window.setInterval(() => {
   state.world.elapsedSeconds += seconds;
   applyProduction(seconds);
   processWorldEvents();
-  markDirty();
+
 
   if (Date.now() - lastFullRender >= 1000) {
     renderAll();
