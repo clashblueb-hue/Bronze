@@ -107,12 +107,183 @@ const UI = {
   frontierCard: document.getElementById("frontierCard"),
   tabButtons: Array.from(document.querySelectorAll(".tab-button")),
   tabPanels: Array.from(document.querySelectorAll(".tab-panel")),
+  logoutButton: document.getElementById("logoutButton"),
+  manualSaveButton: document.getElementById("manualSaveButton"),
 };
+
+const AUTH = {
+  authView: document.getElementById("authView"),
+  appView: document.getElementById("appView"),
+  authMessage: document.getElementById("authMessage"),
+  loginForm: document.getElementById("loginForm"),
+  registerForm: document.getElementById("registerForm"),
+  loginUsername: document.getElementById("loginUsername"),
+  loginPassword: document.getElementById("loginPassword"),
+  registerUsername: document.getElementById("registerUsername"),
+  registerPassword: document.getElementById("registerPassword"),
+};
+
+const USERS_KEY = "bronze_banner_users";
+const LOGGED_IN_USER_KEY = "bronze_banner_logged_in_user";
+let currentUser = localStorage.getItem(LOGGED_IN_USER_KEY) || "";
+let lastAutoSave = Date.now();
 
 let state = null;
 let dirty = false;
 let saving = false;
 let lastFullRender = 0;
+
+// Hash password with crypto.subtle (async SHA-256)
+async function hashPassword(password) {
+  const msgUint8 = new TextEncoder().encode(password);
+  const hashBuffer = await crypto.subtle.digest('SHA-256', msgUint8);
+  const hashArray = Array.from(new Uint8Array(hashBuffer));
+  return hashArray.map(b => b.toString(16).padStart(2, '0')).join('');
+}
+
+function getUsers() {
+  return JSON.parse(localStorage.getItem(USERS_KEY) || "{}");
+}
+
+function saveUsers(users) {
+  localStorage.setItem(USERS_KEY, JSON.stringify(users));
+}
+
+function setAuthMessage(text, type = "success") {
+  AUTH.authMessage.textContent = text;
+  AUTH.authMessage.className = `message-line ${type === "error" ? "message-error" : "message-success"}`;
+}
+
+function clearAuthMessage() {
+  AUTH.authMessage.textContent = "";
+  AUTH.authMessage.className = "message-line";
+}
+
+function showAuthView() {
+  AUTH.authView.classList.remove("hidden");
+  AUTH.appView.classList.add("hidden");
+}
+
+function showAppView() {
+  AUTH.authView.classList.add("hidden");
+  AUTH.appView.classList.remove("hidden");
+}
+
+function saveGame() {
+  if (!currentUser || !state) return;
+  localStorage.setItem("bronze_banner_save_" + currentUser, JSON.stringify(state));
+}
+
+function loadGameForUser(username) {
+  currentUser = username;
+  localStorage.setItem(LOGGED_IN_USER_KEY, username);
+  UI.playerName.textContent = username;
+  
+  const savedData = localStorage.getItem("bronze_banner_save_" + username);
+  if (savedData) {
+    try {
+      state = normalizeState(JSON.parse(savedData));
+      // Apply offline progress!
+      const now = Date.now();
+      const offlineSeconds = Math.max(0, (now - state.lastTick) / 1000);
+      state.lastTick = now;
+      state.world.elapsedSeconds += offlineSeconds;
+      applyProduction(offlineSeconds);
+      processWorldEvents();
+    } catch (e) {
+      state = createInitialState();
+    }
+  } else {
+    state = createInitialState();
+    saveGame();
+  }
+  
+  showAppView();
+  renderAll();
+}
+
+function logout() {
+  saveGame();
+  currentUser = "";
+  state = null;
+  localStorage.removeItem(LOGGED_IN_USER_KEY);
+  showAuthView();
+}
+
+async function initAuthListeners() {
+  AUTH.loginForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearAuthMessage();
+    const username = AUTH.loginUsername.value.trim().toLowerCase();
+    const password = AUTH.loginPassword.value;
+    
+    if (!username || !password) {
+      setAuthMessage("Username and password are required.", "error");
+      return;
+    }
+    
+    const users = getUsers();
+    if (!users[username]) {
+      setAuthMessage("User not found.", "error");
+      return;
+    }
+    
+    const hashedPassword = await hashPassword(password);
+    if (users[username] !== hashedPassword) {
+      setAuthMessage("Invalid password.", "error");
+      return;
+    }
+    
+    setAuthMessage("Logged in successfully!");
+    AUTH.loginForm.reset();
+    setTimeout(() => {
+      loadGameForUser(username);
+    }, 500);
+  });
+
+  AUTH.registerForm.addEventListener("submit", async (event) => {
+    event.preventDefault();
+    clearAuthMessage();
+    const username = AUTH.registerUsername.value.trim().toLowerCase();
+    const password = AUTH.registerPassword.value;
+    
+    if (!username || !password) {
+      setAuthMessage("Username and password are required.", "error");
+      return;
+    }
+    
+    if (username.length < 3) {
+      setAuthMessage("Username must be at least 3 characters long.", "error");
+      return;
+    }
+    
+    const users = getUsers();
+    if (users[username]) {
+      setAuthMessage("Username already exists.", "error");
+      return;
+    }
+    
+    const hashedPassword = await hashPassword(password);
+    users[username] = hashedPassword;
+    saveUsers(users);
+    
+    setAuthMessage("Account created successfully!");
+    AUTH.registerForm.reset();
+    setTimeout(() => {
+      loadGameForUser(username);
+    }, 500);
+  });
+
+  UI.logoutButton.addEventListener("click", () => {
+    logout();
+  });
+
+  UI.manualSaveButton.addEventListener("click", () => {
+    saveGame();
+    addLog("Settlement progress saved successfully.");
+    renderAll();
+  });
+}
 function createEmptyResourceMap() {
   return Object.fromEntries(resources.map((resource) => [resource.key, 0]));
 }
@@ -1917,6 +2088,10 @@ window.setInterval(() => {
   applyProduction(seconds);
   processWorldEvents();
 
+  if (Date.now() - lastAutoSave >= 5000) {
+    saveGame();
+    lastAutoSave = Date.now();
+  }
 
   if (Date.now() - lastFullRender >= 1000) {
     renderAll();
@@ -1928,8 +2103,12 @@ window.setInterval(() => {
 }, 250);
 
 (function init() {
-  state = createInitialState();
-  renderAll();
+  initAuthListeners();
+  if (currentUser) {
+    loadGameForUser(currentUser);
+  } else {
+    showAuthView();
+  }
 })();
 
 if ("serviceWorker" in navigator) {

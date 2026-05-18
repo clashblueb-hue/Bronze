@@ -9,7 +9,59 @@
     <link rel="manifest" href="./manifest.json" />
   </head>
   <body>
-    <div id="appView" class="shell">
+    <div id="authView" class="auth-shell hidden">
+      <div class="auth-backdrop"></div>
+      <div class="auth-panel-wrap">
+        <article class="auth-hero">
+          <p class="kicker">Settlement sandbox clicker</p>
+          <h1>Bronze Banner</h1>
+          <p class="lead">
+            Manage, customize, and persist your offline sandbox settlement. Create an account or log in to continue.
+          </p>
+          <div id="authMessage" class="message-line"></div>
+        </article>
+
+        <div class="auth-grid">
+          <article class="auth-card">
+            <h2>Log In</h2>
+            <p class="soft-text">Enter your credentials to load your saved settlement.</p>
+            <form id="loginForm">
+              <div style="display: grid; gap: 8px;">
+                <div>
+                  <label class="field-label" for="loginUsername">Username</label>
+                  <input id="loginUsername" type="text" placeholder="Enter username" required />
+                </div>
+                <div>
+                  <label class="field-label" for="loginPassword">Password</label>
+                  <input id="loginPassword" type="password" placeholder="Enter password" required />
+                </div>
+                <button class="action-button" type="submit" style="margin-top: 10px; width: 100%;">Log In</button>
+              </div>
+            </form>
+          </article>
+
+          <article class="auth-card">
+            <h2>Create Account</h2>
+            <p class="soft-text">Register a new profile to start a fresh adventure.</p>
+            <form id="registerForm">
+              <div style="display: grid; gap: 8px;">
+                <div>
+                  <label class="field-label" for="registerUsername">Username</label>
+                  <input id="registerUsername" type="text" placeholder="Enter username" required />
+                </div>
+                <div>
+                  <label class="field-label" for="registerPassword">Password</label>
+                  <input id="registerPassword" type="password" placeholder="Enter password" required />
+                </div>
+                <button class="action-button alt" type="submit" style="margin-top: 10px; width: 100%;">Create Account</button>
+              </div>
+            </form>
+          </article>
+        </div>
+      </div>
+    </div>
+
+    <div id="appView" class="shell hidden">
       <header class="masthead">
         <div class="masthead-copy">
           <p class="kicker">Settlement sandbox clicker</p>
@@ -39,6 +91,8 @@
             <strong id="explorerLevelSummary">1</strong>
           </article>
           <div class="top-actions">
+            <button id="manualSaveButton" class="ghost-button" type="button">Save Game</button>
+            <button id="logoutButton" class="ghost-button" type="button">Log Out</button>
           </div>
         </div>
       </header>

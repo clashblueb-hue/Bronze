@@ -889,9 +889,6 @@ select {
   }
 }
 
-.auth-grid {
-  display: none !important;
-}
 
 /* Floating Click Indicators */
 .floating-click-text {
